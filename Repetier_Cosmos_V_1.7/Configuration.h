@@ -22,7 +22,7 @@
 // MAXI CONFIGURACION_RAPIDA    : Menu de configuración rápida de menu.
 
 // MAXI PAGINA_1_PRINCIPAL      : Es la página con la que comienza
-// MAXI PAGINA_2_POSICIONES     : Muestra las posiciones de cada eje 
+// MAXI PAGINA_2_POSICIONES     : Muestra las posiciones de cada eje
 // MAXI PAGINA_3_TEMPERATURAS   : Muestra de temperaturas de cama y extrusor
 
 // MAXI MENU_PRINCIPAL
@@ -89,11 +89,11 @@
 #define EXTRUDER_FAN_COOL_TEMP 50
 #define PDM_FOR_EXTRUDER 1
 #define PDM_FOR_COOLER 0
-#define DECOUPLING_TEST_MAX_HOLD_VARIANCE 30    // VER MAXI: Firmware tests for decoupled sensor - heater. When target temperature is reached, the temperature 
-                                                // may only swing this amount or it will mark your combination as decoupled. If you get false alarams 
+#define DECOUPLING_TEST_MAX_HOLD_VARIANCE 30    // VER MAXI: Firmware tests for decoupled sensor - heater. When target temperature is reached, the temperature
+                                                // may only swing this amount or it will mark your combination as decoupled. If you get false alarams
                                                 // after reaching target temperature, increase this value.
-                                                
-#define DECOUPLING_TEST_MIN_TEMP_RISE 1         // VER MAXI: On heatup, we expect at least this temperature rise after the time period set in the extruder. 
+
+#define DECOUPLING_TEST_MIN_TEMP_RISE 1         // VER MAXI: On heatup, we expect at least this temperature rise after the time period set in the extruder.
                                                 //If your measurement is stable, 1 is the value you want. VER: EXT0_DECOUPLE_TEST_PERIOD
 #define KILL_IF_SENSOR_DEFECT 0
 #define RETRACT_ON_PAUSE 3
@@ -103,9 +103,9 @@
 #define EXT0_Y_OFFSET 0
 #define EXT0_Z_OFFSET 0
 
-// Menos el  5% es: 91.46144 en lugar de 96.2752 
+// Menos el  5% es: 91.46144 en lugar de 96.2752
 // Menos el 10% es: 86.64768 en lugar de 96.2752
-#define EXT0_STEPS_PER_MM 86.64768               // Ver Maxi - Decia: 184.5504, 96.2752, 48.1376, 24.0688   
+#define EXT0_STEPS_PER_MM 86.64768               // Ver Maxi - Decia: 184.5504, 96.2752, 48.1376, 24.0688
 
 #define EXT0_TEMPSENSOR_TYPE 5
 #define EXT0_TEMPSENSOR_PIN TEMP_0_PIN
@@ -135,12 +135,12 @@
 #define EXT0_DESELECT_COMMANDS ""
 #define EXT0_EXTRUDER_COOLER_PIN 8              // VER MAXI: Extruder PIN
 #define EXT0_EXTRUDER_COOLER_SPEED 255
-#define EXT0_DECOUPLE_TEST_PERIOD 27000         // Cambiado al actual en V_1_4, antes decia: 23000  // VER MAXI: [ms] > Maximum time required to rise temperature by DECOUPLING_TEST_MIN_TEMP_RISE = 1. 
+#define EXT0_DECOUPLE_TEST_PERIOD 27000         // Cambiado al actual en V_1_4, antes decia: 23000  // VER MAXI: [ms] > Maximum time required to rise temperature by DECOUPLING_TEST_MIN_TEMP_RISE = 1.
                                                 // If rising is slower, heaters will be disabled for safety.
 #define EXT0_JAM_PIN -1
 #define EXT0_JAM_PULLUP 0
 
-#define FEATURE_RETRACTION 1                        //Allow retraction with G10/G11 removing requirement for retraction setting in slicer. Also allows filament change if lcd is configured. VER MAXI : Decía 0 - 
+#define FEATURE_RETRACTION 1                        //Allow retraction with G10/G11 removing requirement for retraction setting in slicer. Also allows filament change if lcd is configured. VER MAXI : Decía 0 -
 // It is usefull, for example,  if you want to share gcode with a friend (instead of STL files).
 // G10 S<1 = long retract, 0 = short retract = default> retracts filament according to stored setting
 // G11 S<1 = long retract, 0 = short retract = default> = Undo retraction according to stored setting
@@ -151,7 +151,7 @@
 // M208 - set recover=unretract length S[positive mm surplus to the M207 S*] F[feedrate mm/sec]
 
 #define AUTORETRACT_ENABLED 0                       // VER MAXI : decía 0 - Ultimo cambio 14/11/15 - Autoretract converts pure extrusion moves into retractions. Beware that
-                                                    // simple extrusion e.g. over Repetier-Host will then not work! 
+                                                    // simple extrusion e.g. over Repetier-Host will then not work!
 #define RETRACTION_LENGTH 3                         // VER MAXI : decía 0 - Ultimo cambio 14/11/15 - VER MAXI: Decía 3
 #define RETRACTION_LONG_LENGTH 13
 #define RETRACTION_SPEED 40
@@ -213,7 +213,7 @@
 //   {971*4, 28*8},{1001*4, 9*8},{1011*4, -18*8},{1021*4, -26*8}}
 
 
-// Termistor del Marlin: 
+// Termistor del Marlin:
 // ATC Semitec 104GT-2 (Used in ParCan)
 // Verified by linagee. Source: http://shop.arcol.hu/static/datasheets/thermistors.pdf
 // Calculated using 4.7kohm pullup, voltage divider math, and manufacturer provided temp/resistance
@@ -253,7 +253,7 @@
 #define HEATED_BED_PID_IGAIN   33
 #define HEATED_BED_PID_DGAIN 290
 #define HEATED_BED_PID_MAX 215
-#define HEATED_BED_DECOUPLE_TEST_PERIOD 240000        // VER MAXI: [ms] > Maximum time required to rise temperature by DECOUPLING_TEST_MIN_TEMP_RISE = 1. 
+#define HEATED_BED_DECOUPLE_TEST_PERIOD 240000        // VER MAXI: [ms] > Maximum time required to rise temperature by DECOUPLING_TEST_MIN_TEMP_RISE = 1.
                                                       // If rising is slower, heaters will be disabled for safety.
 #define MIN_EXTRUDER_TEMP 170                         // MAXI: Decía 180 - En 190 el filamento nuestro deja pelos, en 180 extruye pero estaba al borde de desconectar
 #define MAXTEMP 260
@@ -314,8 +314,8 @@
 #define X_HOME_DIR -1
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
-#define X_MAX_LENGTH 300 // MAXI : Decía 264 - Ponemos mayor longitud por si el cabezal se mueve hasta el extremo mientras se 
-#define Y_MAX_LENGTH 250 // MAXI : Decía 190   transporta y pueda llegaral home cuando se lo manda (Sino corta por soft limit) 
+#define X_MAX_LENGTH 300 // MAXI : Decía 264 - Ponemos mayor longitud por si el cabezal se mueve hasta el extremo mientras se
+#define Y_MAX_LENGTH 250 // MAXI : Decía 190   transporta y pueda llegaral home cuando se lo manda (Sino corta por soft limit)
 #define Z_MAX_LENGTH 150 // MAXI : Decía 130
 #define X_MIN_POS -21    // MAXI : Decía 0
 #define Y_MIN_POS -5     // MAXI : Decía 0
@@ -347,10 +347,10 @@
 #define MAX_INACTIVE_TIME 0L
 #define MAX_FEEDRATE_X 55 // MAXI : Decía 120
 #define MAX_FEEDRATE_Y 45 // MAXI : Decía 120
-#define MAX_FEEDRATE_Z 3
-#define HOMING_FEEDRATE_X 40 // MAXI : Decía 30
-#define HOMING_FEEDRATE_Y 40 // MAXI : Decía 30
-#define HOMING_FEEDRATE_Z 3
+#define MAX_FEEDRATE_Z 8  // JUANCHI: Decia 3
+#define HOMING_FEEDRATE_X 50 // MAXI : Decía 30  JUANCHI: cambiado de las velocidades con que la impr va a home
+#define HOMING_FEEDRATE_Y 45 // MAXI : Decía 30
+#define HOMING_FEEDRATE_Z 8  //JUANCHI: Decia 3
 #define HOMING_ORDER HOME_ORDER_YXZ
 #define ZHOME_MIN_TEMPERATURE 0
 #define ZHOME_HEAT_ALL 1
@@ -493,7 +493,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #endif
 
 #define SD_EXTENDED_DIR 1 /** Show extended directory including file length. Don't use this with Pronterface! */
-#define SD_RUN_ON_STOP "M117 Impresion detenida\n G90\n G92 E0\n G1 E-1\n G92 E0\n M140 S0\n M104 S0\n G1 Z130\n G28 X0 Y0 \n M107\n M84\n "    // VER MAXI: Rutina agregada 
+#define SD_RUN_ON_STOP "M117 Impresion detenida\n G90\n G92 E0\n G1 E-1\n G92 E0\n M140 S0\n M104 S0\n G1 Z65\n G1 X-21\n G1 Y-5\n M107\n M84\n"    // VER MAXI: Rutina agregada  ; JUANCHI: no aparece mas el Y HOME
 #define SD_STOP_HEATER_AND_MOTORS_ON_STOP 1
 
 #define ARC_SUPPORT 1
@@ -522,7 +522,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #define FEATURE_BEEPER 0
 #define CASE_LIGHTS_PIN -1
 #define CASE_LIGHT_DEFAULT_ON 1
-#define UI_START_SCREEN_DELAY 2000 // MAXI : Delay de la pantalla inicial de presentación  
+#define UI_START_SCREEN_DELAY 2000 // MAXI : Delay de la pantalla inicial de presentación
 #define UI_DYNAMIC_ENCODER_SPEED 1
         /**
 Beeper sound definitions for short beeps during key actions

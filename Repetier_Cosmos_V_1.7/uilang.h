@@ -1041,6 +1041,7 @@
 #define UI_TEXT_ACTION_XPOSITION_FAST2 "X:%x0 mm","Min:%sx Max:%sX"
 #define UI_TEXT_ACTION_YPOSITION_FAST2 "Y:%x1 mm","Min:%sy Max:%sY"
 #define UI_TEXT_ACTION_ZPOSITION_FAST2 "Z:%x2 mm","Min:%sz Max:%sZ"
+#define UI_TEXT_FAN               "ON/OFF Ventilador"
 #define UI_TEXT_FANSPEED          "Vel. ventilador"
 #define UI_TEXT_FAN_OFF           "Apagar ventilador"
 #define UI_TEXT_FAN_25            "Ventilador al 25%%%"
@@ -1082,7 +1083,7 @@
 #define UI_TEXT_PAGE_BUFFER       "Buffer:%oB"
 
 //#define UI_TEXT_PAGE_EXTRUDER     " E:%ec/%Ec" cDEG "C" cARROW "%oC"   MAXI : Se cambio. Habia mucha informacion
-#define UI_TEXT_PAGE_EXTRUDER     "   %ec/%Ec" cDEG "C" 
+#define UI_TEXT_PAGE_EXTRUDER     "   %ec/%Ec" cDEG "C"
 
 #define UI_TEXT_PAGE_EXTRUDER1     "E1:%e0/%E0" cDEG "C" cARROW "%o0"
 #define UI_TEXT_PAGE_EXTRUDER2     "E2:%e1/%E1" cDEG "C" cARROW "%o1"
@@ -1099,7 +1100,7 @@
 #define UI_TEXT_WIZ_CH_FILAMENT3 "y coloque el nuevo"
 #define UI_TEXT_CLICK_DONE "Click when done"
 
-// MAXI : Definidas para el menu_rapido 
+// MAXI : Definidas para el menu_rapido
 
 #define UI_TEXT_IDLE         "En espera..."
 #define UI_TEXT_SD_INSERTED  "SD instertada"
@@ -1180,7 +1181,7 @@
 
 #define UI_TEXT_FILAMENTE_CHARGE "Cargar filamento"
 
-#define UI_TEXT_WIZ_WAITTEMP_ABS1 "Esperar a" 
+#define UI_TEXT_WIZ_WAITTEMP_ABS1 "Esperar a"
 #define UI_TEXT_WIZ_WAITTEMP_ABS2 "precalentar ABS"
 #define UI_TEXT_WIZ_WAITTEMP_PLA1 "Esperar a"
 #define UI_TEXT_WIZ_WAITTEMP_PLA2 "precalentar PLA"

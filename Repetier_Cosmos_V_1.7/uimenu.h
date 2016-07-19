@@ -1126,6 +1126,9 @@ UI_MENU_CHANGEACTION_FILTER(ui_menu_main_flowmultiply,UI_TEXT_FLOW_MULTIPLY,UI_A
 UI_MENU_CHANGEACTION_FILTER(ui_menu_main_temp_ext0,UI_TEXT_EXTR0_TEMP,UI_ACTION_EXTRUDER0_TEMP, MENU_MODE_PRINTING | MENU_MODE_SD_PRINTING | MENU_MODE_FAN_RUNNING,0)            // Cambia TEMPERATURA de EXTRUSOR
 UI_MENU_CHANGEACTION_FILTER(ui_menu_main_bed_temp, UI_TEXT_BED_TEMP  ,UI_ACTION_HEATED_BED_TEMP,MENU_MODE_PRINTING | MENU_MODE_SD_PRINTING | MENU_MODE_FAN_RUNNING,0)                   // Cambia TEMPERATURA de CAMA - Usado también en MAIN
 
+
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_fan, UI_TEXT_FAN,UI_ACTION_FAN_SUSPEND, MENU_MODE_PRINTING | MENU_MODE_SD_PRINTING, 0)  //Enciende o apaga ventilador durante la impresion
+
 // Cambio de filamento durante la impresión - Implementado en Main
 #if FEATURE_RETRACTION
   UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_main_changefil,UI_TEXT_CHANGE_FILAMENT,UI_ACTION_WIZARD_FILAMENTCHANGE,MENU_MODE_PRINTING,0) // 8) Cambio de filamento
@@ -1148,8 +1151,8 @@ UI_MENU_SUBMENU_FILTER(ui_menu_main5, UI_TEXT_CONFIGURATION,ui_menu_configuratio
 //UI_MENU(ui_menu_main,UI_MENU_MAIN,9+UI_MENU_BACKCNT+UI_MENU_SD_CNT+UI_MENU_FAN_CNT+SD_PRINTFILE_ENTRY_CNT+UI_CHANGE_FIL_CNT)
 //#define UI_MENU_MAIN {UI_MENU_ADDCONDBACK &ui_menu_main_speedmultiply,&ui_menu_main_flowmultiply,&ui_menu_main1,&ui_menu_main3,&ui_menu_main2,UI_MENU_FAN_COND UI_MENU_SD_COND &ui_menu_main4,&ui_menu_main5,&ui_menu_ext_temp0,&ui_menu_bed_temp,&ui_menu_main_changefil,&ui_menu_sd_pause,&ui_menu_sd_continue,&ui_menu_sd_stop}
 //#define UI_MENU_MAIN {UI_MENU_ADDCONDBACK &ui_menu_main_speedmultiply,&ui_menu_main_flowmultiply,&ui_menu_main1,&ui_menu_main3,UI_MENU_SD_COND &ui_menu_main2,UI_MENU_FAN_COND &ui_menu_main4,&ui_menu_main5,&ui_menu_ext_temp0,&ui_menu_bed_temp,&ui_menu_main_changefil,&ui_menu_sd_pause,&ui_menu_sd_continue,&ui_menu_sd_stop}
-#define UI_MENU_MAIN {UI_MENU_ADDCONDBACK &ui_menu_main_speedmultiply,&ui_menu_main_flowmultiply,&ui_menu_main1,&ui_menu_main3,UI_MENU_SD_COND &ui_menu_main2,UI_MENU_FAN_COND &ui_menu_main4,&ui_menu_main5,&ui_menu_main_temp_ext0,&ui_menu_main_bed_temp,&ui_menu_main_changefil,&ui_menu_sd_pause,&ui_menu_sd_continue,&ui_menu_sd_stop}
-UI_MENU(ui_menu_main,UI_MENU_MAIN,12+UI_MENU_BACKCNT+UI_MENU_SD_CNT+UI_MENU_FAN_CNT+UI_CHANGE_FIL_CNT)
+#define UI_MENU_MAIN {UI_MENU_ADDCONDBACK &ui_menu_main_speedmultiply,&ui_menu_main_flowmultiply,&ui_menu_main1,&ui_menu_main3,UI_MENU_SD_COND &ui_menu_main2,UI_MENU_FAN_COND &ui_menu_main4,&ui_menu_main5,&ui_menu_main_temp_ext0,&ui_menu_main_bed_temp,&ui_menu_fan,&ui_menu_main_changefil,&ui_menu_sd_pause,&ui_menu_sd_continue,&ui_menu_sd_stop}
+UI_MENU(ui_menu_main,UI_MENU_MAIN,13+UI_MENU_BACKCNT+UI_MENU_SD_CNT+UI_MENU_FAN_CNT+UI_CHANGE_FIL_CNT)
 
 /* Define menus accessible by action commands
 
