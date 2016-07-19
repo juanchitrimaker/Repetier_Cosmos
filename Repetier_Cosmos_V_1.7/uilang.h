@@ -977,6 +977,7 @@
 #define UI_TEXT_Z_POS_FAST       "Mover Z"
 #define UI_TEXT_E_POSITION       "Extrusion manual"
 #define UI_TEXT_BED_TEMP         "Temp. Cama: %Eb" cDEG "C"
+#define UI_TEXT_BED_OFF          "Enfriar Cama"
 #define UI_TEXT_EXTR0_TEMP       "Temp. Ext.: %E0" cDEG "C"
 #define UI_TEXT_EXTR1_TEMP       "Temp. 2   : %E1" cDEG "C"
 #define UI_TEXT_EXTR1_TEMP       "Temp. 3   : %E2" cDEG "C"

@@ -598,22 +598,23 @@ UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel1,UI_TEXT_EXTR1_SELECT,UI_ACTION_SELECT_EXT
 #endif
 
 UI_MENU_ACTIONCOMMAND(ui_menu_ext_off0,UI_TEXT_EXTR0_OFF,UI_ACTION_EXTRUDER0_OFF)           // 4) Jog Extruder
+UI_MENU_ACTIONCOMMAND(ui_menu_bed_off,UI_TEXT_BED_OFF,UI_ACTION_HEATED_BED_OFF)           // 5) APAGAR HEATED BED
 UI_MENU_ACTIONCOMMAND(ui_menu_ext_off1,UI_TEXT_EXTR1_OFF,UI_ACTION_EXTRUDER1_OFF)
 
 #if NUM_EXTRUDER>2 && MIXING_EXTRUDER == 0
   UI_MENU_ACTIONCOMMAND(ui_menu_ext_off2,UI_TEXT_EXTR2_OFF,UI_ACTION_EXTRUDER2_OFF)
 #endif
 
-UI_MENU_ACTIONCOMMAND(ui_menu_ext_origin,UI_TEXT_EXTR_ORIGIN,UI_ACTION_RESET_EXTRUDER)      // 5) Reset Extruder position
+UI_MENU_ACTIONCOMMAND(ui_menu_ext_origin,UI_TEXT_EXTR_ORIGIN,UI_ACTION_RESET_EXTRUDER)      // 6) Reset Extruder position
 
 #if NUM_EXTRUDER==2 && MIXING_EXTRUDER == 0
-  #define UI_MENU_EXTCOND &ui_menu_ext_temp0,&ui_menu_ext_temp1,&ui_menu_ext_off0,&ui_menu_ext_off1,&ui_menu_ext_sel0,&ui_menu_ext_sel1,
+  #define UI_MENU_EXTCOND &ui_menu_ext_temp0,&ui_menu_ext_temp1,&ui_menu_ext_off0,&ui_menu_bed_off,&ui_menu_ext_off1,&ui_menu_ext_sel0,&ui_menu_ext_sel1,
   #define UI_MENU_EXTCNT 6
 #elif NUM_EXTRUDER > 2 && MIXING_EXTRUDER == 0
-  #define UI_MENU_EXTCOND &ui_menu_ext_temp0,&ui_menu_ext_temp1,&ui_menu_ext_temp2,&ui_menu_ext_off0,&ui_menu_ext_off1,&ui_menu_ext_off2,&ui_menu_ext_sel0,&ui_menu_ext_sel1,&ui_menu_ext_sel2,
+  #define UI_MENU_EXTCOND &ui_menu_ext_temp0,&ui_menu_ext_temp1,&ui_menu_ext_temp2,&ui_menu_ext_off0,&ui_menu_bed_off,&ui_menu_ext_off1,&ui_menu_ext_off2,&ui_menu_ext_sel0,&ui_menu_ext_sel1,&ui_menu_ext_sel2,
   #define UI_MENU_EXTCNT 9
 #else
-  #define UI_MENU_EXTCOND &ui_menu_ext_temp0,&ui_menu_ext_off0,
+  #define UI_MENU_EXTCOND &ui_menu_ext_temp0,&ui_menu_ext_off0,&ui_menu_bed_off,
   #define UI_MENU_EXTCNT 2
 #endif
 
