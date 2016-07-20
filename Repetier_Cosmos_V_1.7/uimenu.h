@@ -272,7 +272,8 @@ for 2 row displays. You can add additional pages or change the default pages lik
  // MAXI PAGINA_3_TEMPERATURAS - Muestra de temperaturas
  // ****************************************************************************************************************************
 
- UI_PAGE4(ui_page3,"Filamento:%x4  m","","","")   // VER MAXI: Esta línea fue agregada para no repetir las temperaturas. Muestra el filamento consumido en metros.
+ UI_PAGE4(ui_page3,"Filamento:%x4  m","Tiempo: %is","","")   // VER MAXI: Esta línea fue agregada para no repetir las temperaturas. Muestra el filamento consumido en metros.
+ //JUANCHI: En linea de arriba agregue el  tiempo, para eso utilize el dinamicstring %is y lo cambie en ui.cpp
  //UI_PAGE4(ui_page3,"Filamento:%x4 cm",UI_TEXT_PRINT_TIME,"%Ut","%os") // VER MAXI: No muestra el tiempo
 
 
@@ -647,10 +648,10 @@ UI_MENU(ui_menu_extruder,UI_MENU_EXTRUDER,UI_MENU_BACKCNT+UI_MENU_BEDCNT+UI_MENU
 
 UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_bed,UI_TEXT_PREHEAT_ABS_BED,UI_ACTION_PREHEAT_ABS_BED+UI_ACTION_TOPMENU)
 UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_ext,UI_TEXT_PREHEAT_ABS_EXT,UI_ACTION_PREHEAT_ABS_EXT+UI_ACTION_TOPMENU)
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_all,UI_TEXT_PREHEAT_ABS_ALL,UI_ACTION_PREHEAT_ABS)
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_all,UI_TEXT_PREHEAT_ABS_ALL,UI_ACTION_PREHEAT_ABS+UI_ACTION_TOPMENU)
 UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_bed,UI_TEXT_PREHEAT_PLA_BED,UI_ACTION_PREHEAT_PLA_BED+UI_ACTION_TOPMENU)
 UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_ext,UI_TEXT_PREHEAT_PLA_EXT,UI_ACTION_PREHEAT_PLA_EXT+UI_ACTION_TOPMENU)
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_all,UI_TEXT_PREHEAT_PLA_ALL,UI_ACTION_PREHEAT_PLA)
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_all,UI_TEXT_PREHEAT_PLA_ALL,UI_ACTION_PREHEAT_PLA+UI_ACTION_TOPMENU)
 
 #define UI_MENU_PREHEAT_ABS_PLA {UI_MENU_ADDCONDBACK &ui_menu_quick_preheat_abs_bed,&ui_menu_quick_preheat_abs_ext,&ui_menu_quick_preheat_abs_all,&ui_menu_quick_preheat_pla_bed,&ui_menu_quick_preheat_pla_ext,&ui_menu_quick_preheat_pla_all}
 //#define UI_MENU_FILAMENT_CHARGE {UI_MENU_ADDCONDBACK &ui_menu_filament_charge_abs_abs,&ui_menu_filament_charge_abs_pla}
@@ -723,7 +724,7 @@ UI_MENU_SUBMENU(ui_menu_quick_preheat_abs_pla, UI_TEXT_PREHEAT_ABS_PLA, ui_menu_
 //UI_MENU_ACTIONCOMMAND(ui_menu_quick_cooldown,UI_TEXT_COOLDOWN,UI_ACTION_COOLDOWN)             // 3) Enfria todo
 //UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_preheat_pla,UI_TEXT_PREHEAT_PLA,UI_ACTION_PREHEAT_PLA,0,MENU_MODE_PRINTING)
 //UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_preheat_abs,UI_TEXT_PREHEAT_ABS,UI_ACTION_PREHEAT_ABS,0,MENU_MODE_PRINTING)
-UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_cooldown,UI_TEXT_COOLDOWN,UI_ACTION_COOLDOWN,0,MENU_MODE_PRINTING)
+UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_cooldown,UI_TEXT_COOLDOWN,UI_ACTION_COOLDOWN+UI_ACTION_TOPMENU,0,MENU_MODE_PRINTING)
 //UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_origin,UI_TEXT_SET_TO_ORIGIN,UI_ACTION_SET_ORIGIN,0,MENU_MODE_PRINTING)  // 4) Manda todo al HOME
 //UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_home_all,UI_TEXT_HOME_ALL,UI_ACTION_HOME_ALL,0,MENU_MODE_PRINTING)
 UI_MENU_ACTIONCOMMAND_FILTER(ui_menu_quick_stopstepper,UI_TEXT_DISABLE_STEPPER,UI_ACTION_DISABLE_STEPPER,0,MENU_MODE_PRINTING) // 5)  Desactiva motores

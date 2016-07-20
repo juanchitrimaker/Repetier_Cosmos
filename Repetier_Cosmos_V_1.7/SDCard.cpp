@@ -26,6 +26,9 @@
 char tempLongFilename[LONG_FILENAME_LENGTH + 1];
 char fullName[LONG_FILENAME_LENGTH * SD_MAX_FOLDER_DEPTH + SD_MAX_FOLDER_DEPTH + 1];
 
+
+
+
 SDCard sd;
 
 SDCard::SDCard()
@@ -149,7 +152,10 @@ void SDCard::pausePrint(bool intern)
 
 void SDCard::continuePrint(bool intern)
 {
+
+
     if(!sd.sdactive) return;
+
     if(intern) {
         GCode::executeFString(PSTR(PAUSE_END_COMMANDS));
         Printer::GoToMemoryPosition(true, true, false, false, Printer::maxFeedrate[X_AXIS]);

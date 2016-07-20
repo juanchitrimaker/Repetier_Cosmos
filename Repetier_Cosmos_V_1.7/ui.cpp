@@ -29,6 +29,12 @@ extern const int8_t encoder_table[16] PROGMEM ;
 #include <ctype.h>
 
 char SD_filename[28] = {0};
+char TIEMPO_buffer[28] = {0};
+char tiempo_print[28] = {0};
+//char el_cero[1] = "0";
+unsigned long previousMillis = 0;
+const long interval = 1000;
+int segundos = 0,minutos =0,horas=0,num=0;
 
 #if FEATURE_SERVO > 0 && UI_SERVO_CONTROL > 0
   #if   UI_SERVO_CONTROL == 1 && defined(SERVO0_NEUTRAL_POS)
@@ -107,7 +113,7 @@ void beep(uint8_t duration,uint8_t count)
   #endif
   #else
   #if UI_DISPLAY_I2C_CHIPTYPE==0
-  
+
   #if BEEPER_ADDRESS == UI_DISPLAY_I2C_ADDRESS
           HAL::i2cWrite((BEEPER_PIN) | uid.outputMask);
   #else
@@ -1225,6 +1231,11 @@ void UIDisplay::parse(const char *txt,bool ram)
     static uint8_t beepdelay = 0;
     int ivalue = 0;
     float fvalue = 0;
+    unsigned long currentMillis = 0;
+
+
+
+
     while(col < MAX_COLS)
     {
         char c = (ram ? *(txt++) : pgm_read_byte(txt++));
@@ -1237,6 +1248,17 @@ void UIDisplay::parse(const char *txt,bool ram)
         // dynamic parameter, parse meaning and replace
         char c1 = (ram ? *(txt++) : pgm_read_byte(txt++));
         char c2 = (ram ? *(txt++) : pgm_read_byte(txt++));
+        //Como no existe una funcion que cuente el tiempo de impresion, agregue lo siguiente
+        // sd.sdmode indica si se comienza a imprimir y con la funcion cuento 1 segundo y losumo en una variable
+        if(sd.sdmode == 1){
+                currentMillis = millis();
+                if(currentMillis - previousMillis >= interval) {
+                // save the last time you blinked the LED
+                previousMillis = currentMillis;
+                num++;
+            }
+
+        }
         switch(c1)
         {
         case '%':
@@ -1298,7 +1320,7 @@ void UIDisplay::parse(const char *txt,bool ram)
                 if(beepdelay == 1) BEEP_LONG;
                 if(tempController[eid]->isSensorDefect())
                 {
-                    //addStringP(PSTR(" def "));  //VER MAXI: Cambie fila de abajo por esta 
+                    //addStringP(PSTR(" def "));  //VER MAXI: Cambie fila de abajo por esta
                     addStringP(PSTR("ERROR"));
                     //Com::printFLN(PSTR("Error de termistor")); // VER MAXI
                     break;
@@ -1348,7 +1370,37 @@ void UIDisplay::parse(const char *txt,bool ram)
             else if(c2 >= 'X' && c2 <= 'Z') addFloat(Printer::homingFeedrate[c2 - 'X'], 5, 0);
             break;
         case 'i':
-            if(c2 == 's') addInt(stepperInactiveTime / 60000, 3);
+            //JUANCHI: En lo que era %is le agregue esta funcion que es para poner el tiempo de impresion en el  display
+            if(c2 == 's'){
+                horas=(int)(num / 3600);
+                minutos=(int)((num - horas * 3600) / 60);
+                segundos=num - (horas * 3600 + minutos * 60);
+
+                //Agrego Horas
+                if(horas < 10){
+                    strcpy (tiempo_print,"0");
+                }
+                itoa(horas,TIEMPO_buffer,10); //(integer, yourBuffer, base)
+                strcat (tiempo_print,TIEMPO_buffer);
+                strcat (tiempo_print,":");
+
+                //Agrego Minutos
+                if(minutos < 10){
+                    strcat (tiempo_print,"0");
+                }
+                itoa(minutos,TIEMPO_buffer,10);
+                strcat (tiempo_print,TIEMPO_buffer);
+                strcat (tiempo_print,":");
+
+                //Agrego Segundos
+                if(segundos < 10){
+                    strcat (tiempo_print,"0");
+                }
+                itoa(segundos,TIEMPO_buffer,10);
+                strcat (tiempo_print,TIEMPO_buffer);
+
+                addString(tiempo_print);
+            } //JUANCHI DECIA: addInt(stepperInactiveTime / 60000, 3); //SE UTILIZABA PARA MOSTRAR EL TIEMPO EN QUE ESTAN INACTIVOS LOS STEPPERS
             else if(c2 == 'p') addInt(maxInactiveTime / 60000, 3);
             break;
         case 'O': // ops related stuff
@@ -2216,20 +2268,20 @@ int UIDisplay::okAction(bool allowMoves)
       Printer::setUIErrorMessage(false);
       return 0;
   }
-  
+
   BEEP_SHORT
-  
+
   #if UI_HAS_KEYS == 1
-  
+
     if(menuLevel == 0)   // Enter menu
     {
       menuLevel = 1;
       menuTop[1] = 0;
       menuPos[1] =  UI_MENU_BACKCNT; // if top entry is back, default to next useful item
-      menu[1] = &ui_menu_main;    
+      menu[1] = &ui_menu_main;
       return 0;
     }
-    
+
     UIMenu *men = (UIMenu*)menu[menuLevel];
     //uint8_t nr = pgm_read_word_near(&(menu->numEntries));
     uint8_t mtype = pgm_read_byte(&(men->menuType));
@@ -2238,7 +2290,7 @@ int UIDisplay::okAction(bool allowMoves)
     unsigned char entType;
     int action;
 
-    
+
     #if SDSUPPORT
       if(mtype == UI_MENU_TYPE_FILE_SELECTOR)
       {
@@ -2252,7 +2304,7 @@ int UIDisplay::okAction(bool allowMoves)
           uint8_t filePos = menuPos[menuLevel] - 1;
           char filename[LONG_FILENAME_LENGTH + 1];
           getSDFilenameAt(filePos, filename);
-          
+
           if(isDirname(filename))   // Directory change selected
           {
             goDir(filename);
@@ -2264,7 +2316,7 @@ int UIDisplay::okAction(bool allowMoves)
           }
 
           int16_t shortAction; // renamed to avoid scope confusion
-        
+
           if (Printer::isAutomount())
             shortAction = UI_ACTION_SD_PRINT;
           else
@@ -2274,10 +2326,10 @@ int UIDisplay::okAction(bool allowMoves)
             ent =(UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel-1]]));
             shortAction = pgm_read_word(&(ent->action));
           }
-          
+
           sd.file.close();
           sd.fat.chdir(cwd);
-        
+
           EVENT_START_UI_ACTION(shortAction);
           switch(shortAction)
           {
@@ -2313,19 +2365,19 @@ int UIDisplay::okAction(bool allowMoves)
         return 0;
       }
     #endif //SD SUPPORT
-  
+
     entries = (UIMenuEntry**)pgm_read_word(&(men->entries));
     ent =(UIMenuEntry *)pgm_read_word(&(entries[menuPos[menuLevel]]));
     entType = pgm_read_byte(&(ent->menuType));     // 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command, 4 = modify action
     action = pgm_read_word(&(ent->action));
-    
+
     if(mtype == UI_MENU_TYPE_MODIFICATION_MENU)   // action menu
     {
         action = pgm_read_word(&(men->id));
         finishAction(action);
         return executeAction(UI_ACTION_BACK, true);
     }
-    
+
     if(mtype == UI_MENU_TYPE_SUBMENU && entType == 4)   // Modify action
     {
         if(activeAction)   // finish action
@@ -2337,41 +2389,41 @@ int UIDisplay::okAction(bool allowMoves)
           activeAction = action;
         return 0;
     }
-    
-    if(mtype == UI_MENU_TYPE_WIZARD)  // VER MAXI: BED_CALIBRATION OK 
+
+    if(mtype == UI_MENU_TYPE_WIZARD)  // VER MAXI: BED_CALIBRATION OK
     {
         action = pgm_read_word(&(men->id));
         switch(action)
-        { 
+        {
 
             // *****************************************
             // MAXI : Filament charge
             // *****************************************
-            
+
             #if FEATURE_FILAMENTCHARGE
               case UI_ACTION_WIZARD_FIL_DISCHARGE_ABS:
                 popMenu(false);
-                pushMenu(&ui_wiz_fil_charge_abs, true); 
+                pushMenu(&ui_wiz_fil_charge_abs, true);
               break;
               case UI_ACTION_WIZARD_FIL_CHARGE_ABS:
                 popMenu(false);
                 pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
                 GCode::executeFString(PSTR("G28 X0 Y0"));
                 Extruder::setTemperatureForExtruder(0,0);
-                Commands::waitUntilEndOfAllMoves(); 
+                Commands::waitUntilEndOfAllMoves();
                 popMenu(true);
               break;
 
               case UI_ACTION_WIZARD_FIL_DISCHARGE_PLA:
                 popMenu(false);
-                pushMenu(&ui_wiz_fil_charge_pla, true); 
+                pushMenu(&ui_wiz_fil_charge_pla, true);
               break;
               case UI_ACTION_WIZARD_FIL_CHARGE_PLA:
                 popMenu(false);
                 pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
                 GCode::executeFString(PSTR("G28 X0 Y0"));
                 Extruder::setTemperatureForExtruder(0,0);
-                Commands::waitUntilEndOfAllMoves(); 
+                Commands::waitUntilEndOfAllMoves();
                 popMenu(true);
               break;
 
@@ -2381,27 +2433,27 @@ int UIDisplay::okAction(bool allowMoves)
                 //Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0,false,true);
                 //Commands::waitUntilEndOfAllMoves();
                 //GCode::executeFString(PSTR("M109 T0 s180"));   // MAXI : EVALUAR
-                popMenu(false);               
+                popMenu(false);
                 pushMenu(&ui_wiz_fil_charge_pla, true);
               break;
-              
+
               case UI_ACTION_WIZARD_FIL_DISCHARGE_PLA_ABS:
                 popMenu(false);
                 pushMenu(&ui_wiz_waitheat_abs, true);
                 //Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0,false,true);
                 //Commands::waitUntilEndOfAllMoves();
                 GCode::executeFString(PSTR("M109 T0 s240"));
-                popMenu(false);               
-                pushMenu(&ui_wiz_fil_charge_pla, true); 
+                popMenu(false);
+                pushMenu(&ui_wiz_fil_charge_pla, true);
               break;
-         
+
             #endif
 
-            
+
             // *****************************************
             // MAXI : Manual bed calibration wizard
             // *****************************************
-            
+
             #if FEATURE_MANUALBEDCALIBRATION
               case UI_ACTION_BED_CALIBRATION_P1:              // Calibrating P1 is finished
                 //if(!allowMoves) return false;
@@ -2442,7 +2494,7 @@ int UIDisplay::okAction(bool allowMoves)
                 GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
                 Commands::waitUntilEndOfAllMoves();
                 popMenu(true);
-                
+
               break;
             #endif
 
@@ -2461,13 +2513,13 @@ int UIDisplay::okAction(bool allowMoves)
 
 
 
-            
+
             #if FEATURE_RETRACTION
               case UI_ACTION_WIZARD_FILAMENTCHANGE: // filament change is finished
                   //BEEP_SHORT;
                   popMenu(true);
                   Extruder::current->retractDistance(EEPROM_FLOAT(RETRACTION_LENGTH));
-                  
+
                   #if FILAMENTCHANGE_REHOME
                     #if Z_HOME_DIR > 0
                       Printer::homeAxis(true, true, FILAMENTCHANGE_REHOME == 2);
@@ -2475,22 +2527,22 @@ int UIDisplay::okAction(bool allowMoves)
                       Printer::homeAxis(true, true, false);
                     #endif
                   #endif
-                  
+
                   Printer::GoToMemoryPosition(true, true, false, false, Printer::homingFeedrate[X_AXIS]);
                   Printer::GoToMemoryPosition(false, false, true, false, Printer::homingFeedrate[Z_AXIS]);
                   Extruder::current->retractDistance(-EEPROM_FLOAT(RETRACTION_LENGTH));
                   Printer::currentPositionSteps[E_AXIS] = Printer::popWizardVar().l; // set e to starting position
                   Printer::setBlockingReceive(false);
-                  
+
                   #if EXTRUDER_JAM_CONTROL
                     Extruder::markAllUnjammed();
                   #endif
-                  
+
                   Printer::setJamcontrolDisabled(false);
-                  
+
                 break;
-    
-                
+
+
                 #if EXTRUDER_JAM_CONTROL
                   case UI_ACTION_WIZARD_JAM_REHEAT: // user saw problem and takes action
                     popMenu(false);
@@ -2505,12 +2557,12 @@ int UIDisplay::okAction(bool allowMoves)
                 #endif // EXTRUDER_JAM_CONTROL
             #endif // FEATURE_RATRACTION
         }
-        
-        
+
+
         return 0;
     }
 
-    
+
     if(entType == 2)   // Enter submenu
     {
         pushMenu((UIMenu*)action, false);
@@ -2535,7 +2587,7 @@ int UIDisplay::okAction(bool allowMoves)
         return executeAction(action, allowMoves);
     }
     return executeAction(UI_ACTION_BACK, allowMoves);
-    
+
   #endif // UI_HAS_KEYS
 }
 
@@ -2619,17 +2671,17 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
   millis_t dtReal;
   millis_t dt = dtReal = actTime - lastNextPrev;
   lastNextPrev = actTime;
-  
+
   if(dt < SPEED_MAX_MILLIS) dt = SPEED_MAX_MILLIS;
     if(dt > SPEED_MIN_MILLIS)
     {
       dt = SPEED_MIN_MILLIS;
-      lastNextAccumul = 1;  
+      lastNextAccumul = 1;
     }
-    
+
     float f = (float)(SPEED_MIN_MILLIS - dt) / (float)(SPEED_MIN_MILLIS - SPEED_MAX_MILLIS);
     lastNextAccumul = 1.0f + (float)SPEED_MAGNIFICATION * f * f;
-    
+
     #if UI_DYNAMIC_ENCODER_SPEED
       uint16_t dynSp = lastNextAccumul / 16;
         if(dynSp < 1)  dynSp = 1;
@@ -2651,10 +2703,10 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         {
           menuPos[0] = (menuPos[0] == 0 ? UI_NUM_PAGES - 1 : menuPos[0] - 1);
         }
-        
+
         return true;
       }
-      
+
       UIMenu *men = (UIMenu*)menu[menuLevel];
       uint8_t nr = pgm_read_word_near(&(men->numEntries));
       uint8_t mtype = HAL::readFlashByte((PGM_P)&(men->menuType));
@@ -2664,7 +2716,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
       // 0 = Info, 1 = Headline, 2 = submenu ref, 3 = direct action command
       uint8_t entType = HAL::readFlashByte((PGM_P)&(ent->menuType));
       int action = pgm_read_word(&(ent->action));
-      
+
       if(mtype == UI_MENU_TYPE_SUBMENU && activeAction == 0)   // browse through menu items
       {
         if((UI_INVERT_MENU_DIRECTION && next < 0) || (!UI_INVERT_MENU_DIRECTION && next > 0))
@@ -2687,12 +2739,12 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
                  break;
           }
         }
-        
+
         shift = -2; // reset shift position
         adjustMenuPos();
         return true;
       }
-      
+
       #if SDSUPPORT
         if(mtype == UI_MENU_TYPE_FILE_SELECTOR)   // SD listing
         {
@@ -2716,19 +2768,19 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
           return true;
         }
       #endif //SD_SUPPORT
-      
+
       if(mtype == UI_MENU_TYPE_MODIFICATION_MENU || mtype == UI_MENU_TYPE_WIZARD) action = pgm_read_word(&(men->id));
       else action = activeAction;
-      
+
         int8_t increment = next;  // MAXI : increment
         EVENT_START_NEXTPREVIOUS(action,increment);
-      
+
         switch(action)
         {
           case UI_ACTION_FANSPEED:
             Commands::setFanSpeed(Printer::getFanSpeed() + increment * 3,false);
           break;
-        
+
         case UI_ACTION_XPOSITION:
           if(!allowMoves) return false;
             #if UI_SPEEDDEPENDENT_POSITIONING
@@ -2744,13 +2796,13 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
             #else
               PrintLine::moveRelativeDistanceInStepsReal(increment,0,0,0,Printer::homingFeedrate[X_AXIS],false);
             #endif
-    
+
             Commands::printCurrentPosition(PSTR("UI_ACTION_XPOSITION "));
         break;
-    
+
         case UI_ACTION_YPOSITION:
           if(!allowMoves) return false;
-        
+
             #if UI_SPEEDDEPENDENT_POSITIONING
               {
                   float d = 0.01 * (float)increment * lastNextAccumul;
@@ -2763,7 +2815,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
       #else
               PrintLine::moveRelativeDistanceInStepsReal(0,increment,0,0,Printer::homingFeedrate[Y_AXIS],false);
       #endif
-      
+
         Commands::printCurrentPosition(PSTR("UI_ACTION_YPOSITION "));
         break;
     case UI_ACTION_ZPOSITION_NOTEST:
@@ -2805,10 +2857,10 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         if(!allowMoves) return false;
         Printer::setNoDestinationCheck(true);
 		goto ZPOS2;
-   
+
     case UI_ACTION_ZPOSITION_FAST:
         if(!allowMoves) return false;
-        
+
         ZPOS2:
         PrintLine::moveRelativeDistanceInStepsReal(0,0,Printer::axisStepsPerMM[Z_AXIS] * increment,0,Printer::homingFeedrate[Z_AXIS],true);
         Printer::setNoDestinationCheck(false);
@@ -2819,7 +2871,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         PrintLine::moveRelativeDistanceInSteps(0,0,0,Printer::axisStepsPerMM[E_AXIS]*increment / Printer::extrusionFactor,UI_SET_EXTRUDER_FEEDRATE,true,false);
         Commands::printCurrentPosition(PSTR("UI_ACTION_EPOSITION "));
         break;
-        
+
     #if FEATURE_RETRACTION
         case UI_ACTION_WIZARD_FILAMENTCHANGE: // filament change is finished
             Extruder::current->retractDistance(-increment);
@@ -2828,9 +2880,9 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
             break;
     #endif
 
-      
+
     break;
-    
+
     case UI_ACTION_Z_BABYSTEPS:
         #if FEATURE_BABYSTEPPING
             {
@@ -2843,12 +2895,12 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
             }
         #endif
     break;
-    
+
     case UI_ACTION_HEATED_BED_TEMP:
         #if HAVE_HEATED_BED
-            {   
+            {
 
-                // MAXI : CAMA - Inversi√≥n de botones
+                // MAXI : CAMA - Inversi®Æn de botones
                 int tmp = (int)heatedBedController.targetTemperatureC;
                 if(tmp < UI_SET_MIN_HEATED_BED_TEMP) tmp = 0;
                   //if(tmp == 0 && increment > 0) tmp = UI_SET_MIN_HEATED_BED_TEMP;  Original
@@ -2865,15 +2917,15 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
     #if NUM_EXTRUDER>2
         case UI_ACTION_EXTRUDER2_TEMP:
     #endif
-    
+
     #if NUM_EXTRUDER>1
         case UI_ACTION_EXTRUDER1_TEMP:
     #endif
-    
+
     case UI_ACTION_EXTRUDER0_TEMP:
     {
 
-        // MAXI : Extrusor - Inversi√≥n de botones
+        // MAXI : Extrusor - Inversi®Æn de botones
         int tmp = (int)extruder[action - UI_ACTION_EXTRUDER0_TEMP].tempControl.targetTemperatureC;
         if(tmp < UI_SET_MIN_EXTRUDER_TEMP) tmp = 0;
         //if(tmp == 0 && increment > 0) tmp = UI_SET_MIN_EXTRUDER_TEMP;   Original
@@ -2885,7 +2937,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         Extruder::setTemperatureForExtruder(tmp, action - UI_ACTION_EXTRUDER0_TEMP);
     }
     break;
-    
+
     case UI_ACTION_FEEDRATE_MULTIPLY:
     {
         int fr = Printer::feedrateMultiply;
@@ -2893,14 +2945,14 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         Commands::changeFeedrateMultiply(fr);
     }
     break;
-    
+
     case UI_ACTION_FLOWRATE_MULTIPLY:       // MAXI : flujo
     {
         INCREMENT_MIN_MAX(Printer::extrudeMultiply,1,25,500);
         Commands::changeFlowrateMultiply(Printer::extrudeMultiply);
     }
     break;
-    
+
     case UI_ACTION_STEPPER_INACTIVE:
     {
         uint8_t inactT = stepperInactiveTime / 60000;
@@ -2908,7 +2960,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         stepperInactiveTime = inactT * 60000;
     }
     break;
-    
+
     case UI_ACTION_MAX_INACTIVE:
     {
         uint8_t inactT = maxInactiveTime / 60000;
@@ -2916,27 +2968,27 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         maxInactiveTime = inactT * 60000;
     }
     break;
-    
+
     case UI_ACTION_PRINT_ACCEL_X:
     case UI_ACTION_PRINT_ACCEL_Y:
     case UI_ACTION_PRINT_ACCEL_Z:
-    
+
         #if DRIVE_SYSTEM!=DELTA
                 // MAXI : Cambio de sentido de las flechas
                 INCREMENT_MIN_MAX(Printer::maxAccelerationMMPerSquareSecond[action - UI_ACTION_PRINT_ACCEL_X],((action == UI_ACTION_PRINT_ACCEL_Z) ? 1 : 100),0,10000);
                 //INCREMENT_MIN_MAX(Printer::maxAccelerationMMPerSquareSecond[action - UI_ACTION_PRINT_ACCEL_X],((action == UI_ACTION_PRINT_ACCEL_Z) ? 1 : -100),0,10000);
-        #else   
-                
+        #else
+
                 INCREMENT_MIN_MAX(Printer::maxAccelerationMMPerSquareSecond[action - UI_ACTION_PRINT_ACCEL_X],100,0,10000);
-                
+
         #endif
         Printer::updateDerivedParameter();
         break;
-        
+
     case UI_ACTION_MOVE_ACCEL_X:
     case UI_ACTION_MOVE_ACCEL_Y:
     case UI_ACTION_MOVE_ACCEL_Z:
-    
+
         #if DRIVE_SYSTEM != DELTA
                 // MAXI : Cambio de sentido de las flechas
                 INCREMENT_MIN_MAX(Printer::maxTravelAccelerationMMPerSquareSecond[action - UI_ACTION_MOVE_ACCEL_X],((action == UI_ACTION_MOVE_ACCEL_Z) ? 1 : 100),0,10000);
@@ -2951,7 +3003,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         INCREMENT_MIN_MAX(Printer::maxJerk,0.1,1,99.9);
         break;
 
-        
+
     #if DRIVE_SYSTEM != DELTA
         case UI_ACTION_MAX_ZJERK:
             INCREMENT_MIN_MAX(Printer::maxZJerk,0.1,0.1,99.9);
@@ -3141,7 +3193,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             Commands::printCurrentPosition(PSTR("UI_ACTION_HOMEALL "));
             Commands::waitUntilEndOfAllMoves();
             popMenu(true);
-            
+
             break;
         case UI_ACTION_HOME_X:
             if(!allowMoves) return UI_ACTION_HOME_X;
@@ -3178,7 +3230,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
         // ************************************
         // MAXI : Bed_calibration (Semi-automatizada)
         // ************************************
-        case UI_ACTION_BED_CALIBRATION: 
+        case UI_ACTION_BED_CALIBRATION:
             if(!allowMoves) return false;
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
@@ -3199,14 +3251,14 @@ int UIDisplay::executeAction(int action, bool allowMoves)
         // ************************************
         // MAXI : Bed_calibration_manual (A mano)
         // ************************************
-          case UI_ACTION_BED_CALIBRATION_MANUAL: 
+          case UI_ACTION_BED_CALIBRATION_MANUAL:
             if(!allowMoves) return false;
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
             GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
             //Printer::setOrigin(0, 0, 0);
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0);
-            GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas     
+            GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
             Printer::moveToReal(0, 0, MANUALBEDCALIBRATION_ZOUT, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
             Printer::moveToReal(MANUALBEDCALIBRATION_X1, MANUALBEDCALIBRATION_Y1, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
             Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, 0, IGNORE_COORDINATE, Printer::homingFeedrate[Z_AXIS]);
@@ -3216,7 +3268,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             pushMenu(&ui_wiz_bed_calibration_return_manual, true);    // Imprime en la pantalla "Moviendo..." y vuelve al origen
 
         break;
-        
+
         // *****************************************
         // MAXI : Filament charge wizard
         // *****************************************
@@ -3231,30 +3283,30 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
             Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, FILAMENTCHARGEPOSITION_ZOUT, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
             Printer::moveToReal(FILAMENTCHARGEPOSITION_X, FILAMENTCHARGEPOSITION_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
-            Commands::waitUntilEndOfAllMoves(); 
+            Commands::waitUntilEndOfAllMoves();
             pushMenu(&ui_wiz_waitheat_abs, true);
             //Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0,false,true);
             //Commands::waitUntilEndOfAllMoves();
             GCode::executeFString(PSTR("M109 T0 S240"));
-            popMenu(false); 
-            pushMenu(&ui_wiz_fil_discharge_abs, true);   
+            popMenu(false);
+            pushMenu(&ui_wiz_fil_discharge_abs, true);
         break;
         case UI_ACTION_FILAMENT_CHARGE_PLA_PLA:
             if(!allowMoves) return false;
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
             GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
-            //Printer::setOrigin(0, 0, 0); 
+            //Printer::setOrigin(0, 0, 0);
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
             Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, FILAMENTCHARGEPOSITION_ZOUT, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
-            Printer::moveToReal(FILAMENTCHARGEPOSITION_X, FILAMENTCHARGEPOSITION_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);            Commands::waitUntilEndOfAllMoves(); 
+            Printer::moveToReal(FILAMENTCHARGEPOSITION_X, FILAMENTCHARGEPOSITION_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);            Commands::waitUntilEndOfAllMoves();
             pushMenu(&ui_wiz_waitheat_pla, true);
             //Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0,false,true);
             //Commands::waitUntilEndOfAllMoves();
             GCode::executeFString(PSTR("M109 T0 S190"));
-            popMenu(false); 
-            pushMenu(&ui_wiz_fil_discharge_pla, true);   
+            popMenu(false);
+            pushMenu(&ui_wiz_fil_discharge_pla, true);
         break;
         case UI_ACTION_FILAMENT_CHARGE_ABS_PLA:
             if(!allowMoves) return false;
@@ -3265,13 +3317,13 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
             Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, FILAMENTCHARGEPOSITION_ZOUT, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
-            Printer::moveToReal(FILAMENTCHARGEPOSITION_X, FILAMENTCHARGEPOSITION_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);            Commands::waitUntilEndOfAllMoves(); 
+            Printer::moveToReal(FILAMENTCHARGEPOSITION_X, FILAMENTCHARGEPOSITION_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);            Commands::waitUntilEndOfAllMoves();
             pushMenu(&ui_wiz_waitheat_abs, true);
             //Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0,false,true);
             //Commands::waitUntilEndOfAllMoves();
             GCode::executeFString(PSTR("M109 T0 S240"));
-            popMenu(false); 
-            pushMenu(&ui_wiz_fil_discharge_abs_pla, true);   
+            popMenu(false);
+            pushMenu(&ui_wiz_fil_discharge_abs_pla, true);
         break;
         case UI_ACTION_FILAMENT_CHARGE_PLA_ABS:
             if(!allowMoves) return false;
@@ -3282,16 +3334,16 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
             Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, FILAMENTCHARGEPOSITION_ZOUT, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
-            Printer::moveToReal(FILAMENTCHARGEPOSITION_X, FILAMENTCHARGEPOSITION_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);            Commands::waitUntilEndOfAllMoves(); 
+            Printer::moveToReal(FILAMENTCHARGEPOSITION_X, FILAMENTCHARGEPOSITION_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);            Commands::waitUntilEndOfAllMoves();
             pushMenu(&ui_wiz_waitheat_pla, true);
             //Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0,false,true);
             //Commands::waitUntilEndOfAllMoves();
             GCode::executeFString(PSTR("M109 T0 S190"));
-            popMenu(false); 
-            pushMenu(&ui_wiz_fil_discharge_pla_abs, true);   
+            popMenu(false);
+            pushMenu(&ui_wiz_fil_discharge_pla_abs, true);
         break;
 
-            
+
         case UI_ACTION_DEBUG_ECHO:
             Printer::debugLevel ^= 1;
             break;
@@ -3343,7 +3395,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             #if HAVE_HEATED_BED
                 UI_STATUS(UI_TEXT_PREHEAT_BED);
                 Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_PLA);
-            #endif            
+            #endif
         break;
         case UI_ACTION_PREHEAT_ABS_EXT:
             UI_STATUS(UI_TEXT_PREHEAT_EXT);
@@ -3353,7 +3405,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             UI_STATUS(UI_TEXT_PREHEAT_EXT);
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,0);
         break;
-        
+
         case UI_ACTION_PREHEAT_PLA:
             UI_STATUS(UI_TEXT_PREHEAT_PLA);
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,0);
@@ -3367,7 +3419,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_PLA);
 #endif
             break;
-           
+
         case UI_ACTION_PREHEAT_ABS:
             UI_STATUS(UI_TEXT_PREHEAT_ABS);
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
@@ -3627,7 +3679,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
 //            Printer::currentPositionSteps[X_AXIS] = 0;
 //            Printer::currentPositionSteps[Y_AXIS] = 0;
 //            Printer::moveToReal(FILAMENTCHANGE_X_POS, FILAMENTCHANGE_Y_POS,  Printer::currentPosition[Z_AXIS], 0, Printer::homingFeedrate[X_AXIS]);
-//            
+//
 ////            if(Printer::isBlockingReceive()) break;
 ////            Printer::setJamcontrolDisabled(true);
 ////            Com::printFLN(PSTR("important: Filament change required!"));      // Manda un string a la PC
@@ -3652,7 +3704,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
 
 
 
-        
+
 #if EXTRUDER_JAM_CONTROL
         case UI_ACTION_WIZARD_JAM_EOF:
         {

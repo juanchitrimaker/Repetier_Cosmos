@@ -442,6 +442,8 @@ usage or for seraching for memory induced errors. Switch it off for production, 
 #undef min
 #undef max
 
+
+
 class RMath {
 public:
     static inline float min(float a,float b) {
