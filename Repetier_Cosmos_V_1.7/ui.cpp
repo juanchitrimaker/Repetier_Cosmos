@@ -1439,7 +1439,7 @@ void UIDisplay::parse(const char *txt,bool ram)
                 else
 #endif
                     if(sd.sdmode == 0 && x==1){ //codigo agregado para indicar "deteniendo impresion"
-                        addString("Deteniendo Impresión");
+                        addString("Deteniendo Impresion");
                     }
                     else if(x==0) parse(statusMsg, true);
                 break;
