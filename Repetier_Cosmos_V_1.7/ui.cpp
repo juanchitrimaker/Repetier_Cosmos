@@ -31,10 +31,10 @@ extern const int8_t encoder_table[16] PROGMEM ;
 char SD_filename[28] = {0};
 char TIEMPO_buffer[28] = {0};
 char tiempo_print[28] = {0};
-//char el_cero[1] = "0";
+
 unsigned long previousMillis = 0;
 const long interval = 1000;
-int segundos = 0,minutos =0,horas=0,num=0,x=0;
+int segundos = 0,minutos =0,horas=0,num=0,print_stop=0,back_impossible=0;
 
 #if FEATURE_SERVO > 0 && UI_SERVO_CONTROL > 0
   #if   UI_SERVO_CONTROL == 1 && defined(SERVO0_NEUTRAL_POS)
@@ -1427,7 +1427,7 @@ void UIDisplay::parse(const char *txt,bool ram)
 #if SDSUPPORT
                 if(sd.sdactive && sd.sdmode)
                 {
-                    x=1;
+                    print_stop=1;
                     addString(SD_filename);
                     float percent;
                     if(sd.filesize < 2000000) percent = sd.sdpos * 100.0 / sd.filesize;
@@ -1438,10 +1438,13 @@ void UIDisplay::parse(const char *txt,bool ram)
                 }
                 else
 #endif
-                    if(sd.sdmode == 0 && x==1){ //codigo agregado para indicar "deteniendo impresion"
+                    if(sd.sdmode == 0 && print_stop==1){ //codigo agregado para indicar "deteniendo impresion"
                         addString("Deteniendo Impresion");
                     }
-                    else if(x==0) parse(statusMsg, true);
+                    if(sd.sdmode == 0 && print_stop==2){ //codigo agregado para indicar "Impresion pausada"
+                        addString("Impresion Pausada");
+                    }
+                    else if(print_stop==0) parse(statusMsg, true);
                 break;
             }
             if(c2 == 'c')
@@ -2910,7 +2913,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
     case UI_ACTION_HEATED_BED_TEMP:
         #if HAVE_HEATED_BED
             {
-
+                back_impossible = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
                 // MAXI : CAMA - Inversi��n de botones
                 int tmp = (int)heatedBedController.targetTemperatureC;
                 if(tmp < UI_SET_MIN_HEATED_BED_TEMP) tmp = 0;
@@ -2935,7 +2938,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
 
     case UI_ACTION_EXTRUDER0_TEMP:
     {
-
+        back_impossible  =1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
         // MAXI : Extrusor - Inversi��n de botones
         int tmp = (int)extruder[action - UI_ACTION_EXTRUDER0_TEMP].tempControl.targetTemperatureC;
         if(tmp < UI_SET_MIN_EXTRUDER_TEMP) tmp = 0;
@@ -2951,6 +2954,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
 
     case UI_ACTION_FEEDRATE_MULTIPLY:
     {
+        back_impossible  =1;            //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
         int fr = Printer::feedrateMultiply;
         INCREMENT_MIN_MAX(fr,1,25,500);
         Commands::changeFeedrateMultiply(fr);
@@ -2959,6 +2963,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
 
     case UI_ACTION_FLOWRATE_MULTIPLY:       // MAXI : flujo
     {
+        back_impossible  =1;            //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
         INCREMENT_MIN_MAX(Printer::extrudeMultiply,1,25,500);
         Commands::changeFlowrateMultiply(Printer::extrudeMultiply);
     }
@@ -3174,10 +3179,11 @@ int UIDisplay::executeAction(int action, bool allowMoves)
         {
         case UI_ACTION_OK:
             ret = okAction(allowMoves);
+            back_impossible = 0;    //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
             break;
         case UI_ACTION_BACK:
-            if(uid.isWizardActive()) break; // wizards can not exit before finished
-            popMenu(false);
+            if(uid.isWizardActive() || back_impossible == 1) break; // wizards can not exit before finished
+            popMenu(false);  //el "back_impossible" fue agregado para que no pueda volver al  menu anterior sin haber puesto OK
             break;
         case UI_ACTION_NEXT:
             if(!nextPreviousAction(1, allowMoves))
@@ -3188,7 +3194,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
                 ret = UI_ACTION_PREVIOUS;
             break;
         case UI_ACTION_MENU_UP:
-            if(menuLevel > 0) menuLevel--;
+            if(menuLevel > 0 && back_impossible!= 1) menuLevel--; //el "back_impossible" fue agregado para que no pueda volver al  menu anterior sin haber puesto OK
             break;
         case UI_ACTION_TOP_MENU:
             menuLevel = 0;

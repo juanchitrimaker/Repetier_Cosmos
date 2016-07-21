@@ -133,6 +133,7 @@ void SDCard::pausePrint(bool intern)
     if(intern) {
         Commands::waitUntilEndOfAllBuffers();
         sdmode = 0;
+        print_stop=2; //Variable para indicarsi esta pausada la imresion
         Printer::MemoryPosition();
         Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, IGNORE_COORDINATE,
                             Printer::memoryE - RETRACT_ON_PAUSE,
@@ -164,6 +165,7 @@ void SDCard::continuePrint(bool intern)
     }
     Printer::setMenuMode(MENU_MODE_SD_PAUSED, false);
     sdmode = 1;
+    print_stop=1;
 }
 
 void SDCard::stopPrint()
@@ -179,7 +181,7 @@ void SDCard::stopPrint()
         Commands::waitUntilEndOfAllMoves();
         Printer::kill(true);
     }
-    x=0; //Variable agregada para indicar la detencion d  la impresion
+    print_stop=0; //Variable agregada para indicar la detencion d  la impresion
 }
 
 void SDCard::writeCommand(GCode *code)

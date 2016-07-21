@@ -442,7 +442,7 @@ usage or for seraching for memory induced errors. Switch it off for production, 
 #undef min
 #undef max
 
-extern int x; //Variable agregada para indicar la detension d la impresion
+extern int print_stop; //Variable agregada para indicar la detension d la impresion
 
 class RMath {
 public:
