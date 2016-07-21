@@ -34,7 +34,7 @@ char tiempo_print[28] = {0};
 //char el_cero[1] = "0";
 unsigned long previousMillis = 0;
 const long interval = 1000;
-int segundos = 0,minutos =0,horas=0,num=0;
+int segundos = 0,minutos =0,horas=0,num=0,x=0;
 
 #if FEATURE_SERVO > 0 && UI_SERVO_CONTROL > 0
   #if   UI_SERVO_CONTROL == 1 && defined(SERVO0_NEUTRAL_POS)
@@ -1231,7 +1231,8 @@ void UIDisplay::parse(const char *txt,bool ram)
     static uint8_t beepdelay = 0;
     int ivalue = 0;
     float fvalue = 0;
-    unsigned long currentMillis = 0;
+    unsigned long currentMillis = 0;  //variable agregada para contar tiempo transcurrido
+    static int i=0; //variable agregada para resetear el tiempo transcurrido
 
 
 
@@ -1251,6 +1252,11 @@ void UIDisplay::parse(const char *txt,bool ram)
         //Como no existe una funcion que cuente el tiempo de impresion, agregue lo siguiente
         // sd.sdmode indica si se comienza a imprimir y con la funcion cuento 1 segundo y losumo en una variable
         if(sd.sdmode == 1){
+                if(i==0){
+                    num=0;
+                    i=1;
+                }
+
                 currentMillis = millis();
                 if(currentMillis - previousMillis >= interval) {
                 // save the last time you blinked the LED
@@ -1259,6 +1265,7 @@ void UIDisplay::parse(const char *txt,bool ram)
             }
 
         }
+        if(sd.sdmode == 0 )i=0;
         switch(c1)
         {
         case '%':
@@ -1420,6 +1427,7 @@ void UIDisplay::parse(const char *txt,bool ram)
 #if SDSUPPORT
                 if(sd.sdactive && sd.sdmode)
                 {
+                    x=1;
                     addString(SD_filename);
                     float percent;
                     if(sd.filesize < 2000000) percent = sd.sdpos * 100.0 / sd.filesize;
@@ -1430,7 +1438,10 @@ void UIDisplay::parse(const char *txt,bool ram)
                 }
                 else
 #endif
-                    parse(statusMsg, true);
+                    if(sd.sdmode == 0 && x==1){ //codigo agregado para indicar "deteniendo impresion"
+                        addString("Deteniendo ImpresiÃ³n");
+                    }
+                    else if(x==0) parse(statusMsg, true);
                 break;
             }
             if(c2 == 'c')
@@ -2900,7 +2911,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
         #if HAVE_HEATED_BED
             {
 
-                // MAXI : CAMA - Inversi¨®n de botones
+                // MAXI : CAMA - Inversiï¿½ï¿½n de botones
                 int tmp = (int)heatedBedController.targetTemperatureC;
                 if(tmp < UI_SET_MIN_HEATED_BED_TEMP) tmp = 0;
                   //if(tmp == 0 && increment > 0) tmp = UI_SET_MIN_HEATED_BED_TEMP;  Original
@@ -2925,7 +2936,7 @@ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
     case UI_ACTION_EXTRUDER0_TEMP:
     {
 
-        // MAXI : Extrusor - Inversi¨®n de botones
+        // MAXI : Extrusor - Inversiï¿½ï¿½n de botones
         int tmp = (int)extruder[action - UI_ACTION_EXTRUDER0_TEMP].tempControl.targetTemperatureC;
         if(tmp < UI_SET_MIN_EXTRUDER_TEMP) tmp = 0;
         //if(tmp == 0 && increment > 0) tmp = UI_SET_MIN_EXTRUDER_TEMP;   Original

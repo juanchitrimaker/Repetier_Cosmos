@@ -179,6 +179,7 @@ void SDCard::stopPrint()
         Commands::waitUntilEndOfAllMoves();
         Printer::kill(true);
     }
+    x=0; //Variable agregada para indicar la detencion d  la impresion
 }
 
 void SDCard::writeCommand(GCode *code)
