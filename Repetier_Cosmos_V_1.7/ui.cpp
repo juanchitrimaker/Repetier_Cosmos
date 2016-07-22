@@ -35,6 +35,7 @@ char tiempo_print[28] = {0};
 unsigned long previousMillis = 0;
 const long interval = 1000;
 int segundos = 0,minutos =0,horas=0,print_stop=0,back_impossible=0,num=0;;
+int i=0; //variable agregada para resetear el tiempo transcurrido
 
 #if FEATURE_SERVO > 0 && UI_SERVO_CONTROL > 0
   #if   UI_SERVO_CONTROL == 1 && defined(SERVO0_NEUTRAL_POS)
@@ -1225,9 +1226,10 @@ void UIDisplay::addGCode(GCode *code)
     //if(code->hasSTRING())
 }
 
+//interrupcion para contar los segundos en que la maquina esta imprimiendo
 void ISR_Tiempo()
 {
-  static int i=0; //variable agregada para resetear el tiempo transcurrido
+
 
         if(sd.sdmode == 1){
                 if(i==0){
@@ -1238,7 +1240,6 @@ void ISR_Tiempo()
 
 
         }
-        if(sd.sdmode == 0 )i=0;
         return;
 }
 
@@ -1247,10 +1248,8 @@ void UIDisplay::parse(const char *txt,bool ram)
     static uint8_t beepdelay = 0;
     int ivalue = 0;
     float fvalue = 0;
-    unsigned long currentMillis = 0;  //variable agregada para contar tiempo transcurrido
-    static int i=0;
-    static float resto_preview=0; //variable agregada para resetear el tiempo transcurrido
-    int num_preview=0;
+
+
 
 
     while(col < MAX_COLS)
@@ -1268,7 +1267,7 @@ void UIDisplay::parse(const char *txt,bool ram)
         //Como no existe una funcion que cuente el tiempo de impresion, agregue lo siguiente
         // sd.sdmode indica si se comienza a imprimir y con la funcion cuento 1 segundo y losumo en una variable
 
-       if(sd.sdmode == 1)
+       if(sd.sdmode == 1)// habilitamos interrupcion de
          {
             Timer5.initialize(1000000);
             Timer5.attachInterrupt(ISR_Tiempo);
@@ -1297,8 +1296,10 @@ void UIDisplay::parse(const char *txt,bool ram)
             }
 
         }*/
-        if(sd.sdmode == 0 )Timer5.detachInterrupt(); //i=0;//
-
+        if(sd.sdmode == 0 ){
+                i=0;
+                Timer5.detachInterrupt(); //i=0;//
+        }
         switch(c1)
         {
         case '%':
