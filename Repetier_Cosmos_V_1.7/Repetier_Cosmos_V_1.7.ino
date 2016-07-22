@@ -1,3 +1,5 @@
+
+
 /*
     This file is part of Repetier-Firmware.
 
@@ -146,8 +148,11 @@ Custom M Codes
 //#include <LiquidCrystal.h> // Uncomment this if you are using liquid crystal library
 #endif
 
+
+
 void setup()
 {
+
     Printer::setup();
 }
 
@@ -155,7 +160,6 @@ void loop()
 {
     Commands::commandLoop();
 }
-
 
 
 

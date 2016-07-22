@@ -1,3 +1,5 @@
+
+
 /*
     This file is part of Repetier-Firmware.
 
@@ -17,6 +19,8 @@
 */
 
 #include "Repetier.h"
+
+
 
 #if USE_ADVANCE
 uint8_t Printer::maxExtruderSpeed;            ///< Timer delay for end extruder speed
@@ -165,6 +169,9 @@ flag8_t Endstops::lastRead = 0;
 flag8_t Endstops::lastState2 = 0;
 flag8_t Endstops::lastRead2 = 0;
 #endif
+
+void ISR_Tiempo(void);
+
 void Endstops::update() {
     flag8_t newRead = 0;
 #ifdef EXTENDED_ENDSTOPS
@@ -1062,6 +1069,9 @@ void Printer::setup()
 #endif
     EVENT_INITIALIZE;
 }
+
+
+
 
 void Printer::defaultLoopActions()
 {

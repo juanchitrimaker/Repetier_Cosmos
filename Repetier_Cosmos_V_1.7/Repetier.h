@@ -23,6 +23,7 @@
 #define _REPETIER_H
 
 #include <math.h>
+#include "TimerFive.h"
 
 #define REPETIER_VERSION "0.92.3"
 
@@ -443,6 +444,7 @@ usage or for seraching for memory induced errors. Switch it off for production, 
 #undef max
 
 extern int print_stop; //Variable agregada para indicar la detension d la impresion
+extern int num;
 
 class RMath {
 public:
