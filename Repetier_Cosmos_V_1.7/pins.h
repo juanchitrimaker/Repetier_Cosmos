@@ -630,10 +630,10 @@ STEPPER_CURRENT_CONTROL
 #endif
 
 // CAMBIAR!!!!
-#define ORIG_X_STEP_PIN         26 // Decía: 17
-#define ORIG_X_DIR_PIN          25 // Decía: 16 
-#define ORIG_X_ENABLE_PIN       27 // Decía: 48 
-#define ORIG_X_MIN_PIN          33 // Decía: 37 - Fue cambiado por el Z debido a un error en el PCB de adaptación 
+#define ORIG_X_STEP_PIN         17//26 // Decía: 17
+#define ORIG_X_DIR_PIN          16//25 // Decía: 16
+#define ORIG_X_ENABLE_PIN       48//27 // Decía: 48
+#define ORIG_X_MIN_PIN          33 // Decía: 37 - Fue cambiado por el Z debido a un error en el PCB de adaptación
 #define ORIG_X_MAX_PIN          -1 // Decía: 36
 
 // Ahora se lo enchufa en el E2
