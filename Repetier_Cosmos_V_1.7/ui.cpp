@@ -2440,6 +2440,7 @@ int UIDisplay::okAction(bool allowMoves)
 
     if(mtype == UI_MENU_TYPE_WIZARD)  // VER MAXI: BED_CALIBRATION OK
     {
+        back_impossible=1;
         action = pgm_read_word(&(men->id));
         switch(action)
         {
@@ -2452,6 +2453,7 @@ int UIDisplay::okAction(bool allowMoves)
               case UI_ACTION_WIZARD_FIL_DISCHARGE_ABS:
                 popMenu(false);
                 pushMenu(&ui_wiz_fil_charge_abs, true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
               break;
               case UI_ACTION_WIZARD_FIL_CHARGE_ABS:
                 popMenu(false);
@@ -2460,11 +2462,13 @@ int UIDisplay::okAction(bool allowMoves)
                 Extruder::setTemperatureForExtruder(0,0);
                 Commands::waitUntilEndOfAllMoves();
                 popMenu(true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
               break;
 
               case UI_ACTION_WIZARD_FIL_DISCHARGE_PLA:
                 popMenu(false);
                 pushMenu(&ui_wiz_fil_charge_pla, true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
               break;
               case UI_ACTION_WIZARD_FIL_CHARGE_PLA:
                 popMenu(false);
@@ -2473,6 +2477,7 @@ int UIDisplay::okAction(bool allowMoves)
                 Extruder::setTemperatureForExtruder(0,0);
                 Commands::waitUntilEndOfAllMoves();
                 popMenu(true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
               break;
 
               case UI_ACTION_WIZARD_FIL_DISCHARGE_ABS_PLA:
@@ -2483,6 +2488,7 @@ int UIDisplay::okAction(bool allowMoves)
                 //GCode::executeFString(PSTR("M109 T0 s180"));   // MAXI : EVALUAR
                 popMenu(false);
                 pushMenu(&ui_wiz_fil_charge_pla, true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
               break;
 
               case UI_ACTION_WIZARD_FIL_DISCHARGE_PLA_ABS:
@@ -2493,6 +2499,7 @@ int UIDisplay::okAction(bool allowMoves)
                 GCode::executeFString(PSTR("M109 T0 s240"));
                 popMenu(false);
                 pushMenu(&ui_wiz_fil_charge_pla, true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
               break;
 
             #endif
@@ -2510,22 +2517,26 @@ int UIDisplay::okAction(bool allowMoves)
                 Printer::moveToReal(MANUALBEDCALIBRATION_X2, MANUALBEDCALIBRATION_Y2, 0, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
                 Commands::waitUntilEndOfAllMoves();
                 pushMenu(&ui_wiz_bed_calibration_p3, true);  // Imprime en la pantalla: Presione para ir a punto 3
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
               break;
               case UI_ACTION_BED_CALIBRATION_P2:                 // Calibrating P2 is finished
                 //if(!allowMoves) return false;
+                       //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
                 popMenu(false);
                 pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
                 Printer::moveToReal(MANUALBEDCALIBRATION_X3, MANUALBEDCALIBRATION_Y3, 0, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
                 Commands::waitUntilEndOfAllMoves();
                 pushMenu(&ui_wiz_bed_calibration_p4, true);  // Imprime en la pantalla: Presione para ir a punto 4
+                back_impossible  = 1 ;
               break;
               case UI_ACTION_BED_CALIBRATION_P3:                 // Calibrating P3 is finished
                 //if(!allowMoves) return false;
-                popMenu(false);
+               popMenu(false);
                 pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
                 Printer::moveToReal(MANUALBEDCALIBRATION_X4, MANUALBEDCALIBRATION_Y4, 0, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
                 Commands::waitUntilEndOfAllMoves();
                 pushMenu(&ui_wiz_bed_calibration_return, true);  // Imprime en la pantalla: Presione para ir a home de nuevo
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
               break;
               case UI_ACTION_BED_CALIBRATION_RETURN:
                 //if(!allowMoves) return false;
@@ -2542,8 +2553,8 @@ int UIDisplay::okAction(bool allowMoves)
                 GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
                 Commands::waitUntilEndOfAllMoves();
                 popMenu(true);
-
-              break;
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
+            break;
             #endif
 
 
@@ -2587,7 +2598,7 @@ int UIDisplay::okAction(bool allowMoves)
                   #endif
 
                   Printer::setJamcontrolDisabled(false);
-
+                  back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
                 break;
 
 
@@ -2708,7 +2719,7 @@ bool UIDisplay::isWizardActive()
     return HAL::readFlashByte((PGM_P)&(men->menuType)) == 5;
 }
 
-bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
+ bool UIDisplay::nextPreviousAction(int16_t next, bool allowMoves)
 {
   if(Printer::isUIErrorMessage())
   {
@@ -3212,8 +3223,8 @@ int UIDisplay::executeAction(int action, bool allowMoves)
         switch(action)
         {
         case UI_ACTION_OK:
-            ret = okAction(allowMoves);
             back_impossible = 0;    //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
+            ret = okAction(allowMoves);
             break;
         case UI_ACTION_BACK:
             if(uid.isWizardActive() || back_impossible == 1) break; // wizards can not exit before finished
@@ -3224,7 +3235,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
                 ret = UI_ACTION_NEXT;
             break;
         case UI_ACTION_PREVIOUS:
-            if(!nextPreviousAction(-1, allowMoves))
+            if(!nextPreviousAction(-1, allowMoves) && back_impossible!= 1)
                 ret = UI_ACTION_PREVIOUS;
             break;
         case UI_ACTION_MENU_UP:
@@ -3286,6 +3297,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
             GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
+            back_impossible  =1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
             // Printer::setOrigin(0, 0, 0);
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
@@ -3303,10 +3315,12 @@ int UIDisplay::executeAction(int action, bool allowMoves)
         // MAXI : Bed_calibration_manual (A mano)
         // ************************************
           case UI_ACTION_BED_CALIBRATION_MANUAL:
+
             if(!allowMoves) return false;
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
             GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
+            back_impossible  =1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
             //Printer::setOrigin(0, 0, 0);
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0);
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
@@ -3329,6 +3343,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
             GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
+            back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
             //Printer::setOrigin(0, 0, 0);
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
@@ -3347,6 +3362,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
             GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
+            back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
             //Printer::setOrigin(0, 0, 0);
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
@@ -3364,6 +3380,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
             GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
+            back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
             //Printer::setOrigin(0, 0, 0);
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
@@ -3381,6 +3398,7 @@ int UIDisplay::executeAction(int action, bool allowMoves)
             popMenu(false);
             pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
             GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
+            back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
             // Printer::setOrigin(0, 0, 0);
             Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
             GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
