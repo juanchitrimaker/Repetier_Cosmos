@@ -345,12 +345,12 @@
 
 #define STEPPER_INACTIVE_TIME 600L
 #define MAX_INACTIVE_TIME 0L
-#define MAX_FEEDRATE_X 55 // MAXI : Decía 120
-#define MAX_FEEDRATE_Y 45 // MAXI : Decía 120
-#define MAX_FEEDRATE_Z 8  // JUANCHI: Decia 3
-#define HOMING_FEEDRATE_X 50 // MAXI : Decía 30  JUANCHI: cambiado de las velocidades con que la impr va a home
-#define HOMING_FEEDRATE_Y 45 // MAXI : Decía 30
-#define HOMING_FEEDRATE_Z 8  //JUANCHI: Decia 3
+#define MAX_FEEDRATE_X 90 // MAXI : Decía 120
+#define MAX_FEEDRATE_Y 90 // MAXI : Decía 120
+#define MAX_FEEDRATE_Z 7  // JUANCHI: Decia 3
+#define HOMING_FEEDRATE_X 80 // MAXI : Decía 30  //JUANCHI: Decía 50
+#define HOMING_FEEDRATE_Y 80 // MAXI : Decía 30  //JUANCHI: Decía 45
+#define HOMING_FEEDRATE_Z 7  //JUANCHI: Decia 3
 #define HOMING_ORDER HOME_ORDER_YXZ
 #define ZHOME_MIN_TEMPERATURE 0
 #define ZHOME_HEAT_ALL 1
@@ -405,7 +405,7 @@
 #define ACK_WITH_LINENUMBER 0
 #define WAITING_IDENTIFIER "wait"
 #define ECHO_ON_EXECUTE 1
-#define EEPROM_MODE 6               // VER MAXI - Decia: 0 - El 3 incluye los cambios en aceleración de movimiento y travel a 1000, además de la velocidad máxima de Y=45
+#define EEPROM_MODE 7               // VER MAXI - Decia: 0 - El 3 incluye los cambios en aceleración de movimiento y travel a 1000, además de la velocidad máxima de Y=45
 #define PS_ON_PIN ORIG_PS_ON_PIN
 
 /* ======== Servos =======
@@ -493,7 +493,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #endif
 
 #define SD_EXTENDED_DIR 1 /** Show extended directory including file length. Don't use this with Pronterface! */
-#define SD_RUN_ON_STOP "M117 Impresion detenida\n G90\n G92 E0\n G1 E-1\n G92 E0\n M140 S0\n M104 S0\n G1 Z65\n G1 X-21\n G1 Y-5\n M107\n M84\n"    // VER MAXI: Rutina agregada  ; JUANCHI: no aparece mas el Y HOME
+#define SD_RUN_ON_STOP "M117 Impresion detenida\n G90\n G92 E0\n G1 E-1\n G92 E0\n M140 S0\n M104 S0\n G1 Z130\n G1 X-21\n G1 Y-5\n M107\n M84\n"    // VER MAXI: Rutina agregada  ; JUANCHI: no aparece mas el Y HOME
 #define SD_STOP_HEATER_AND_MOTORS_ON_STOP 1
 
 #define ARC_SUPPORT 1

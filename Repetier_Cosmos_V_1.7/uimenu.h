@@ -598,8 +598,8 @@ UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel1,UI_TEXT_EXTR1_SELECT,UI_ACTION_SELECT_EXT
   UI_MENU_ACTIONCOMMAND(ui_menu_ext_sel2,UI_TEXT_EXTR2_SELECT,UI_ACTION_SELECT_EXTRUDER2)
 #endif
 
-UI_MENU_ACTIONCOMMAND(ui_menu_ext_off0,UI_TEXT_EXTR0_OFF,UI_ACTION_EXTRUDER0_OFF)           // 4) Jog Extruder
-UI_MENU_ACTIONCOMMAND(ui_menu_bed_off,UI_TEXT_BED_OFF,UI_ACTION_HEATED_BED_OFF)           // 5) APAGAR HEATED BED
+UI_MENU_ACTIONCOMMAND(ui_menu_ext_off0,UI_TEXT_EXTR0_OFF,UI_ACTION_EXTRUDER0_OFF+UI_ACTION_TOPMENU)           // 4) Jog Extruder      //JUANCHI: Agregado "+UI_ACTION_TOPMENU" para volver al menu principal
+UI_MENU_ACTIONCOMMAND(ui_menu_bed_off,UI_TEXT_BED_OFF,UI_ACTION_HEATED_BED_OFF+UI_ACTION_TOPMENU)           // 5) APAGAR HEATED BED  //JUANCHI: Agregado "+UI_ACTION_TOPMENU" para volver al menu principal
 UI_MENU_ACTIONCOMMAND(ui_menu_ext_off1,UI_TEXT_EXTR1_OFF,UI_ACTION_EXTRUDER1_OFF)
 
 #if NUM_EXTRUDER>2 && MIXING_EXTRUDER == 0
@@ -646,12 +646,12 @@ UI_MENU(ui_menu_extruder,UI_MENU_EXTRUDER,UI_MENU_BACKCNT+UI_MENU_BEDCNT+UI_MENU
 // Precalentar
 // ------------
 
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_bed,UI_TEXT_PREHEAT_ABS_BED,UI_ACTION_PREHEAT_ABS_BED+UI_ACTION_TOPMENU)
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_ext,UI_TEXT_PREHEAT_ABS_EXT,UI_ACTION_PREHEAT_ABS_EXT+UI_ACTION_TOPMENU)
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_all,UI_TEXT_PREHEAT_ABS_ALL,UI_ACTION_PREHEAT_ABS+UI_ACTION_TOPMENU)
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_bed,UI_TEXT_PREHEAT_PLA_BED,UI_ACTION_PREHEAT_PLA_BED+UI_ACTION_TOPMENU)
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_ext,UI_TEXT_PREHEAT_PLA_EXT,UI_ACTION_PREHEAT_PLA_EXT+UI_ACTION_TOPMENU)
-UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_all,UI_TEXT_PREHEAT_PLA_ALL,UI_ACTION_PREHEAT_PLA+UI_ACTION_TOPMENU)
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_bed,UI_TEXT_PREHEAT_ABS_BED,UI_ACTION_PREHEAT_ABS_BED+UI_ACTION_TOPMENU)   //JUANCHI: Agregado "+UI_ACTION_TOPMENU" para volver al menu principal
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_ext,UI_TEXT_PREHEAT_ABS_EXT,UI_ACTION_PREHEAT_ABS_EXT+UI_ACTION_TOPMENU)    //JUANCHI: Agregado "+UI_ACTION_TOPMENU" para volver al menu principal
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_abs_all,UI_TEXT_PREHEAT_ABS_ALL,UI_ACTION_PREHEAT_ABS+UI_ACTION_TOPMENU)        //JUANCHI: Agregado "+UI_ACTION_TOPMENU" para volver al menu principal
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_bed,UI_TEXT_PREHEAT_PLA_BED,UI_ACTION_PREHEAT_PLA_BED+UI_ACTION_TOPMENU)    //JUANCHI: Agregado "+UI_ACTION_TOPMENU" para volver al menu principal
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_ext,UI_TEXT_PREHEAT_PLA_EXT,UI_ACTION_PREHEAT_PLA_EXT+UI_ACTION_TOPMENU)    //JUANCHI: Agregado "+UI_ACTION_TOPMENU" para volver al menu principal
+UI_MENU_ACTIONCOMMAND(ui_menu_quick_preheat_pla_all,UI_TEXT_PREHEAT_PLA_ALL,UI_ACTION_PREHEAT_PLA+UI_ACTION_TOPMENU)        //JUANCHI: Agregado "+UI_ACTION_TOPMENU" para volver al menu principal
 
 #define UI_MENU_PREHEAT_ABS_PLA {UI_MENU_ADDCONDBACK &ui_menu_quick_preheat_abs_bed,&ui_menu_quick_preheat_abs_ext,&ui_menu_quick_preheat_abs_all,&ui_menu_quick_preheat_pla_bed,&ui_menu_quick_preheat_pla_ext,&ui_menu_quick_preheat_pla_all}
 //#define UI_MENU_FILAMENT_CHARGE {UI_MENU_ADDCONDBACK &ui_menu_filament_charge_abs_abs,&ui_menu_filament_charge_abs_pla}
