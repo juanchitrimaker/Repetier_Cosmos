@@ -630,9 +630,9 @@ STEPPER_CURRENT_CONTROL
 #endif
 
 // CAMBIAR!!!!
-#define ORIG_X_STEP_PIN         17//26 // Decía: 17
-#define ORIG_X_DIR_PIN          16//25 // Decía: 16
-#define ORIG_X_ENABLE_PIN       48//27 // Decía: 48
+#define ORIG_X_STEP_PIN         54//26 // Decía: 17   //JUANCHI: mandamos el eje X al slot del eje Y por perdida de pasos
+#define ORIG_X_DIR_PIN          47//25 // Decía: 16   //JUANCHI: mandamos el eje X al slot del eje Y por perdida de pasos
+#define ORIG_X_ENABLE_PIN       55//27 // Decía: 48   //JUANCHI: mandamos el eje X al slot del eje Y por perdida de pasos
 #define ORIG_X_MIN_PIN          33 // Decía: 37 - Fue cambiado por el Z debido a un error en el PCB de adaptación
 #define ORIG_X_MAX_PIN          -1 // Decía: 36
 
