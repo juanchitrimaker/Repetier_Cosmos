@@ -643,9 +643,9 @@ STEPPER_CURRENT_CONTROL
 #define ORIG_Y_MIN_PIN          35
 #define ORIG_Y_MAX_PIN          -1 // Decía: 34
 
-#define ORIG_Z_STEP_PIN         57
-#define ORIG_Z_DIR_PIN          56
-#define ORIG_Z_ENABLE_PIN       62
+#define ORIG_Z_STEP_PIN         17 //Decia: 57
+#define ORIG_Z_DIR_PIN          16 //Decia: 56
+#define ORIG_Z_ENABLE_PIN       48 //Decia: 62
 #define ORIG_Z_MIN_PIN          37 // Decía: 33 - Fue cambiado por el Z debido a un error en el PCB de adaptación
 #define ORIG_Z_MAX_PIN          -1 // Decía: 32
 
