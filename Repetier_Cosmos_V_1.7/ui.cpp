@@ -18,6 +18,12 @@
 
 #define UI_MAIN 1
 #include "Repetier.h"
+#include "SoftwareSerial.h"
+
+SoftwareSerial esp8266(31,30); // make RX Arduino line is pin 31, make TX Arduino line is pin 30.
+                             // This means that you need to connect the TX line from the esp to the Arduino's pin 30
+                             // and the RX line from the esp to the Arduino's pin 31
+
 // The uimenu.h declares static variables of menus, which must be declared only once.
 // It does not define interfaces for other modules, so should never be included elsewhere
 #include "uimenu.h"
@@ -35,7 +41,7 @@ char tiempo_print[28] = {0};
 unsigned long previousMillis = 0;
 const long interval = 1000;
 int segundos = 0,minutos =0,horas=0,print_stop=0,back_impossible=0,num=0;;
-int i=0; //variable agregada para resetear el tiempo transcurrido
+int i=0,wifi=0; //variable agregada para resetear el tiempo transcurrido
 
 #if FEATURE_SERVO > 0 && UI_SERVO_CONTROL > 0
   #if   UI_SERVO_CONTROL == 1 && defined(SERVO0_NEUTRAL_POS)
@@ -1229,19 +1235,50 @@ void UIDisplay::addGCode(GCode *code)
 //interrupcion para contar los segundos en que la maquina esta imprimiendo
 void ISR_Tiempo()
 {
-
-
         if(sd.sdmode == 1){
                 if(i==0){
                     num=0;
                     i=1;
                 }
                 num++;
-
-
+                wifi++;
+                if(wifi > 60)
+                {
+                    //TODO: mandar recibir wifi
+                    wifi = 0;
+                }
         }
         return;
 }
+
+/* Funcion para enviar  comandos y datos por WIFI */
+String sendData(String command, const int timeout, boolean debug)
+{
+    String response = "";
+
+    esp8266.print(command); // send the read character to the esp8266
+
+    long int time = millis();
+
+    while( (time+timeout) > millis())
+    {
+      while(esp8266.available())
+      {
+
+        // The esp has data so display its output to the serial window
+        char c = esp8266.read(); // read the next character.
+        response+=c;
+      }
+    }
+
+    if(debug)
+    {
+      esp8266.print(response);
+    }
+
+    return response;
+}
+
 
 void UIDisplay::parse(const char *txt,bool ram)
 {
@@ -1271,34 +1308,16 @@ void UIDisplay::parse(const char *txt,bool ram)
          {
             Timer5.initialize(1000000);
             Timer5.attachInterrupt(ISR_Tiempo);
+
+            //Timer4.initialize(60000000);
+            //Timer4.attachInterrupt(ISR_Tiempo_WIFI);
         }
- /*               if(i==0){
-                    num=0;
-                    i=1;
-                }
 
-            currentMillis = millis();
-            if(currentMillis - previousMillis >= 1000) {
-
-            num_preview = trunc((currentMillis-previousMillis)/1000);
-
-            if(((currentMillis-previousMillis)/1000)-num_preview>=0,5){
-                num_preview++;
-            }
-           /* else if (resto_preview+(((currentMillis-previousMillis)/1000)-num_preview)>=0,5){
-                num_preview++;
-                resto_preview = 0;
-            }
-            else resto_preview = (((currentMillis-previousMillis)/1000)-num_preview);
-
-            previousMillis = currentMillis;
-            num = num + num_preview;
-            }
-
-        }*/
         if(sd.sdmode == 0 ){
                 i=0;
                 Timer5.detachInterrupt(); //i=0;//
+                //Timer4.detachInterrupt();
+
         }
         switch(c1)
         {
