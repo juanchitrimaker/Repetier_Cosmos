@@ -505,7 +505,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #endif
 #define FEATURE_CONTROLLER 1  // MAXI : Decia 0 - (Cambiar abajo en minusculas) Ahora activo Manual definition of display and keys parameter in uiconfig.h
 #define UI_LANGUAGE 5         // Español
-#define UI_PRINTER_NAME "COSMOS - Version 1.6"
+#define UI_PRINTER_NAME "COSMOS - Version 1.7"
 #define UI_PRINTER_COMPANY "Trimaker"
 #define UI_PAGES_DURATION 4000
 #define UI_ANIMATION 0
