@@ -18,7 +18,7 @@
     by kliment (https://github.com/kliment/Sprinter)
     which based on Tonokip RepRap firmware rewrite based off of Hydra-mmm firmware.
 
-  Functions in this file are used to communicate using ascii or repetier protocol.
+ 
 */
 
 #ifndef COMMANDS_H_INCLUDED
