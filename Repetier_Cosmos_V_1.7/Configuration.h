@@ -317,8 +317,8 @@
 #define X_MAX_LENGTH 300 // MAXI : Decía 264 - Ponemos mayor longitud por si el cabezal se mueve hasta el extremo mientras se
 #define Y_MAX_LENGTH 250 // MAXI : Decía 190   transporta y pueda llegaral home cuando se lo manda (Sino corta por soft limit)
 #define Z_MAX_LENGTH 150 // MAXI : Decía 130
-#define X_MIN_POS -21    // MAXI : Decía 0
-#define Y_MIN_POS -5     // MAXI : Decía 0
+#define X_MIN_POS -19    // MAXI : Decía 0
+#define Y_MIN_POS -3     // MAXI : Decía 0
 #define Z_MIN_POS 0
 #define DISTORTION_CORRECTION 0
 #define DISTORTION_CORRECTION_POINTS 5
@@ -464,6 +464,10 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 
 // MAXI: Definición de constantes de calibración manual de cama
 
+#define FEATURE_MANUALCLEANEXTRUSER 1 // RULO
+
+#define FEATURE_FAN	1	//RULO
+
 #define FEATURE_MANUALBEDCALIBRATION 1
 #define MANUALBEDCALIBRATION_X1 50  // MAXI : Decía 70
 #define MANUALBEDCALIBRATION_Y1 25  // MAXI : Decía 30
@@ -505,7 +509,7 @@ WARNING: Servos can draw a considerable amount of current. Make sure your system
 #endif
 #define FEATURE_CONTROLLER 1  // MAXI : Decia 0 - (Cambiar abajo en minusculas) Ahora activo Manual definition of display and keys parameter in uiconfig.h
 #define UI_LANGUAGE 5         // Español
-#define UI_PRINTER_NAME "COSMOS - Version 1.7"
+#define UI_PRINTER_NAME "COSMOS - Version 1.8"
 #define UI_PRINTER_COMPANY "Trimaker"
 #define UI_PAGES_DURATION 4000
 #define UI_ANIMATION 0

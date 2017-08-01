@@ -2522,6 +2522,59 @@ int UIDisplay::okAction(bool allowMoves)
               break;
 
             #endif
+            // *****************************************
+            // RULO : Destapar extrusor
+            // *****************************************
+            #if FEATURE_MANUALCLEANEXTRUSER
+
+			case UI_ACTION_EXTRUDER_CLEANING_P1:
+ 				popMenu(false);
+                pushMenu(&ui_wiz_extruder_cleaning_p2, true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
+              break;
+
+              case UI_ACTION_EXTRUDER_CLEANING_P2:
+                popMenu(false);
+                pushMenu(&ui_wiz_extruder_cleaning_p3, true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
+
+              break;
+
+              case UI_ACTION_EXTRUDER_CLEANING_P3:
+				popMenu(false);
+                pushMenu(&ui_wiz_extruder_cleaning_p4, true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
+			  break;
+
+              case UI_ACTION_EXTRUDER_CLEANING_P4:
+				popMenu(false);
+                 pushMenu(&ui_wiz_waitcold_ext, true);
+				//Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0,false,true);
+				//Commands::waitUntilEndOfAllMoves();
+				GCode::executeFString(PSTR("M109 T0 S150"));
+				popMenu(false);
+				pushMenu(&ui_wiz_extruder_cleaning_p5, true);
+				back_impossible = 1;
+              break;
+
+              case UI_ACTION_EXTRUDER_CLEANING_P5:
+				popMenu(false);
+                pushMenu(&ui_wiz_extruder_cleaning_p6, true);
+                back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
+              break;
+
+              case UI_ACTION_EXTRUDER_CLEANING_P6:
+				popMenu(false);
+                pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
+                GCode::executeFString(PSTR("G28 X0 Y0"));
+                Extruder::setTemperatureForExtruder(0,0);
+                Commands::waitUntilEndOfAllMoves();
+                popMenu(true);
+                back_impossible  = 1;
+			break;
+
+            #endif
+
 
 
             // *****************************************
@@ -2529,9 +2582,10 @@ int UIDisplay::okAction(bool allowMoves)
             // *****************************************
 
             #if FEATURE_MANUALBEDCALIBRATION
+
               case UI_ACTION_BED_CALIBRATION_P1:              // Calibrating P1 is finished
                 //if(!allowMoves) return false;
-                popMenu(false);
+				popMenu(false);
                 pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
                 Printer::moveToReal(MANUALBEDCALIBRATION_X2, MANUALBEDCALIBRATION_Y2, 0, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
                 Commands::waitUntilEndOfAllMoves();
@@ -2574,6 +2628,7 @@ int UIDisplay::okAction(bool allowMoves)
                 popMenu(true);
                 back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
             break;
+
             #endif
 
 
@@ -3016,6 +3071,10 @@ bool UIDisplay::isWizardActive()
     }
     break;
 
+		case UI_ACTION_PROGRAMABLE_FAN:
+
+    break;
+
     case UI_ACTION_FEEDRATE_MULTIPLY:
     {
         back_impossible  =1;            //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
@@ -3211,6 +3270,18 @@ bool UIDisplay::isWizardActive()
         INCREMENT_MIN_MAX(Extruder::current->advanceL, 1, 0, 600);
         break;
 #endif
+    case UI_ACTION_X_STEPS:
+        INCREMENT_MIN_MAX(Printer::axisStepsPerMM[X_AXIS], 0.1, 1, 9999);
+       // Extruder::selectExtruderById(Extruder::current->id);
+        break;
+    case UI_ACTION_Y_STEPS:
+        INCREMENT_MIN_MAX(Printer::axisStepsPerMM[Y_AXIS], 0.1, 1, 9999);
+        //Extruder::selectExtruderById(Extruder::current->id);
+        break;
+    case UI_ACTION_Z_STEPS:
+        INCREMENT_MIN_MAX(Printer::axisStepsPerMM[Z_AXIS], 0.1, 1, 9999);
+        //Extruder::selectExtruderById(Extruder::current->id);
+        break;
     }
 #if UI_AUTORETURN_TO_MENU_AFTER!=0
     ui_autoreturn_time = HAL::timeInMilliseconds() + UI_AUTORETURN_TO_MENU_AFTER;
@@ -3354,6 +3425,44 @@ int UIDisplay::executeAction(int action, bool allowMoves)
         break;
 
         // *****************************************
+        // RULO : Turn on/off fan
+        // *****************************************
+		case UI_ACTION_TURN_ON_FAN:
+			if(!allowMoves) return false;
+		pwm_pos[NUM_EXTRUDER + 2] = 255;
+		//UI_STATUS_UPD("Ventilador encendido")
+            break;
+
+		case UI_ACTION_TURN_OFF_FAN:
+			if(!allowMoves) return false;
+
+            pwm_pos[NUM_EXTRUDER + 2] = 0;
+            break;
+
+        // *****************************************
+        // RULO : Cleaning extruder wizard
+        // *****************************************
+		case UI_ACTION_EXTRUDER_CLEANING:
+            if(!allowMoves) return false;
+            popMenu(false);
+            pushMenu(&ui_wiz_moving, true);    // Imprime en la pantalla: Moviendo...
+            GCode::executeFString(PSTR("G28 X0 Y0 Z0"));
+            back_impossible  = 1;        //Agregado para que no pueda volver al  menu anterior sin haber puesto OK
+            //Printer::setOrigin(0, 0, 0);
+            Printer::setOrigin(X_MIN_POS, Y_MIN_POS, 0); // MAXI
+            GCode::executeFString(PSTR("G90")); // Set absolute coordinates - por las dudas
+            Printer::moveToReal(IGNORE_COORDINATE, IGNORE_COORDINATE, FILAMENTCHARGEPOSITION_ZOUT, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
+            Printer::moveToReal(FILAMENTCHARGEPOSITION_X, FILAMENTCHARGEPOSITION_Y, IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::homingFeedrate[X_AXIS]);
+            Commands::waitUntilEndOfAllMoves();
+            pushMenu(&ui_wiz_waitheat_ext, true);
+            //Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0,false,true);
+            //Commands::waitUntilEndOfAllMoves();
+            GCode::executeFString(PSTR("M109 T0 S235"));
+            popMenu(false);
+            pushMenu(&ui_wiz_extruder_cleaning_p1, true);
+		break;
+
+        // *****************************************
         // MAXI : Filament charge wizard
         // *****************************************
 
@@ -3484,55 +3593,66 @@ int UIDisplay::executeAction(int action, bool allowMoves)
                 UI_STATUS(UI_TEXT_PREHEAT_BED);
                 Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_PLA);
             #endif
-        break;
+		break;
         case UI_ACTION_PREHEAT_ABS_EXT:
-            UI_STATUS(UI_TEXT_PREHEAT_EXT);
+            //UI_STATUS(UI_TEXT_PREHEAT_EXT);
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
+			#if HAVE_HEATED_BED
+				UI_STATUS(UI_TEXT_PREHEAT_EXT);						//Rulo: Agrego esto y comento el UI_STATUS de abajo para que aparezca en pantalla
+				Extruder::setHeatedBedTemperature(0);
+			#endif
         break;
         case UI_ACTION_PREHEAT_PLA_EXT:
-            UI_STATUS(UI_TEXT_PREHEAT_EXT);
+
+            //UI_STATUS(UI_TEXT_PREHEAT_EXT);
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,0);
-        break;
+			#if HAVE_HEATED_BED
+				UI_STATUS(UI_TEXT_PREHEAT_EXT);						//Rulo: Agrego esto y comento el UI_STATUS de abajo para que aparezca en pantalla
+				Extruder::setHeatedBedTemperature(0);
+			#endif
+       break;
 
         case UI_ACTION_PREHEAT_PLA:
-            UI_STATUS(UI_TEXT_PREHEAT_PLA);
+
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,0);
-#if NUM_EXTRUDER > 1
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,1);
-#endif
-#if NUM_EXTRUDER > 2
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,2);
-#endif
-#if HAVE_HEATED_BED
-            Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_PLA);
-#endif
+			#if NUM_EXTRUDER > 1
+				Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,1);
+			#endif
+			#if NUM_EXTRUDER > 2
+				Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_PLA,2);
+			#endif
+			#if HAVE_HEATED_BED
+				UI_STATUS(UI_TEXT_PREHEAT_PLA);						//Rulo: Lo pongo aca para que aparezca en pantalla
+				Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_PLA);
+			#endif
             break;
 
         case UI_ACTION_PREHEAT_ABS:
-            UI_STATUS(UI_TEXT_PREHEAT_ABS);
+
             Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,0);
-#if NUM_EXTRUDER > 1
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,1);
-#endif
-#if NUM_EXTRUDER > 2
-            Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,2);
-#endif
-#if HAVE_HEATED_BED
-            Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_ABS);
-#endif
+			#if NUM_EXTRUDER > 1
+				Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,1);
+			#endif
+			#if NUM_EXTRUDER > 2
+				Extruder::setTemperatureForExtruder(UI_SET_PRESET_EXTRUDER_TEMP_ABS,2);
+			#endif
+			#if HAVE_HEATED_BED
+				UI_STATUS(UI_TEXT_PREHEAT_ABS);  //RULO: Lo pongo aca para que aparezca en pantalla sino no lo hace.
+				Extruder::setHeatedBedTemperature(UI_SET_PRESET_HEATED_BED_TEMP_ABS);
+			#endif
             break;
         case UI_ACTION_COOLDOWN:
             UI_STATUS(UI_TEXT_COOLDOWN);
             Extruder::setTemperatureForExtruder(0, 0);
-#if NUM_EXTRUDER > 1
-            Extruder::setTemperatureForExtruder(0, 1);
-#endif
-#if NUM_EXTRUDER > 2
-            Extruder::setTemperatureForExtruder(0, 2);
-#endif
-#if HAVE_HEATED_BED
-            Extruder::setHeatedBedTemperature(0);
-#endif
+			#if NUM_EXTRUDER > 1
+				Extruder::setTemperatureForExtruder(0, 1);
+			#endif
+			#if NUM_EXTRUDER > 2
+				Extruder::setTemperatureForExtruder(0, 2);
+			#endif
+			#if HAVE_HEATED_BED
+				Extruder::setHeatedBedTemperature(0);
+			#endif
             break;
         case UI_ACTION_HEATED_BED_OFF:
 #if HAVE_HEATED_BED

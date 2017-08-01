@@ -958,6 +958,7 @@
 #define UI_TEXT_CONFIGURATION    "Config. Avanzada"
 #define UI_TEXT_POSITION         "Posicion"
 #define UI_TEXT_EXTRUDER         "Extrusor/Cama"
+#define UI_TEXT_STEPS_PER_MM	 "Pasos por mm"
 #define UI_TEXT_SD_CARD          "Imprimir desde SD"
 #define UI_TEXT_DEBUGGING        "Debugging"
 #define UI_TEXT_HOME_ALL         "Ir a Home"
@@ -1055,7 +1056,11 @@
 #define UI_TEXT_POWER_INACTIVE2   "Dis. Despues: %ip","[min] 0=Off"
 #define UI_TEXT_GENERAL           "General"
 #define UI_TEXT_BAUDRATE          "Baudrate:%oc"
-#define UI_TEXT_EXTR_STEPS        "Pasos/MM:%Se"
+#define UI_TEXT_EXTR_STEPS        "Pasos/mm:%Se"
+#define UI_TEXT_X_STEPS        "Pasos X/mm:%Sx"
+#define UI_TEXT_Y_STEPS        "Pasos Y/mm:%Sy"
+#define UI_TEXT_Z_STEPS        "Pasos Z/mm:%Sz"
+#define UI_TEXT_EXTRUSOR_STEPS        "Pasos Ext/MM:%Se"
 #define UI_TEXT_EXTR_START_FEED   "Start FR:%Xf"
 #define UI_TEXT_EXTR_MAX_FEED     "Max FR:%XF"
 #define UI_TEXT_EXTR_ACCEL        "Acel:%XA"
@@ -1211,6 +1216,43 @@
 #define UI_TEXT_PREHEAT_ABS_PLA "Precalentar"
 #define UI_TEXT_PREHEAT_BED "Precalentando cama"
 #define UI_TEXT_PREHEAT_EXT "Precalentando extr."
+
+#define UI_TEXT_FAN_1 "Opciones ventilador"
+#define UI_TEXT_TURN_ON_FAN "Encender ventilador"
+#define UI_TEXT_TURN_OFF_FAN "Apagar ventilador"
+#define UI_TEXT_PROGRAMBLE_FAN "Tiempo ON: %ip min"
+
+#define UI_TEXT_EXT_CLEANING "Destapar extrusor"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL21 "Si hay un filamento"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL22 "puesto, presionar la"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL23 "palanca y retirarlo"
+
+#define UI_TEXT_WIZ_WAITTEMP_EXT1 "Esperar a calentar "
+#define UI_TEXT_WIZ_WAITTEMP_EXT2 "extrusor."
+
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL24 "Presionar la "
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL25 "palanca y colocar el"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL26 "filamento de Nylon"
+
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL27	"A continuacion se"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL28	"enfriara el extrusor"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL29	"a 150"cDEG "C."
+
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL30	"Al llegar a 150"cDEG"C"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL31	"saque el filamento"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL32	"de Nylon"
+
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL33	"Presione la palanca"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL34	"y tire del filamento"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL35	"de Nylon."
+
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL36	"Si el Nylon"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL37	"presenta residuos"
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL38	"volver a repetir "
+#define UI_TEXT_WIZ_EXT_CLEANING_CAL39	"los pasos. <OK>"
+
+#define UI_TEXT_WIZ_WAITTEMP_EXT3 "Esperar a enfriar "
+#define UI_TEXT_WIZ_WAITTEMP_EXT4 "extrusor."
 
 #endif
 

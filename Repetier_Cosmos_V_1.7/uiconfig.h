@@ -98,17 +98,17 @@ What display type do you use?
                If you have Sanguino and want to use the library, you need to have Arduino 023 or older. (13.04.2012)
 5 = U8G supported display
 */
-#define UI_DISPLAY_TYPE 1             // VER MAXI - Decia: 5 
+#define UI_DISPLAY_TYPE 1             // VER MAXI - Decia: 5
 
 #if UI_DISPLAY_TYPE == DISPLAY_U8G // Special case for graphic displays
-  
+
   // You need to define which controller you use and set pins accodringly
-  
+
   // For software spi assign these definitions
   // SCK Pin:  UI_DISPLAY_D4_PIN
   // Mosi Pin: UI_DISPLAY_ENABLE_PIN
   // CD Pin:   UI_DISPLAY_RS_PIN
-  
+
   // ST7920 with software SPI
   #define U8GLIB_ST7920
   // SSD1306 with software SPI
@@ -124,10 +124,10 @@ What display type do you use?
   // UI_DISPLAY_RS_PIN = CS
   // UI_DISPLAY_D5_PIN = A0
   //#define U8GLIB_ST7565_NHD_C2832_HW_SPI
-  
+
   #define UI_LCD_WIDTH 128
   #define UI_LCD_HEIGHT 64
-  
+
   //select font size
   #define UI_FONT_6X10 //default font
   #ifdef UI_FONT_6X10
@@ -139,7 +139,7 @@ What display type do you use?
     #define UI_FONT_SMALL_WIDTH 5 //smaller font for status display
     #define UI_ANIMATION false  // Animations are too slow
   #endif
-  
+
   //calculate rows and cols available with current font
   #define UI_COLS (UI_LCD_WIDTH/UI_FONT_WIDTH)
   #define UI_ROWS (UI_LCD_HEIGHT/UI_FONT_HEIGHT)
@@ -194,16 +194,16 @@ Define the pin
   #define UI_DISPLAY_D5_PIN _BV(1)
   #define UI_DISPLAY_D6_PIN _BV(2)
   #define UI_DISPLAY_D7_PIN _BV(3)
-  
+
   // uncomment if your using led to indicated the bed is hot
   //#define UI_I2C_HEATBED_LED    _BV(8)
-  
+
   // uncomment if your using led to indicated the extruder is hot
   //#define UI_I2C_HOTEND_LED     _BV(7)
-  
+
   // uncomment if your using led to indicated the FAN is on
   //#define UI_I2C_FAN_LED        _BV(6)
-  
+
   // Pins for adafruid RGB shield
   /*#define UI_DISPLAY_RS_PIN _BV(15)
   #define UI_DISPLAY_RW_PIN _BV(14)
@@ -219,16 +219,16 @@ Define the pin
 
 #else // Direct display connections
 
-  #define UI_DISPLAY_RS_PIN        19    // EXP2 PIN 4 (LCD RS)  
-  #define UI_DISPLAY_RW_PIN        -1    // EXP2 PIN 1 (RW donde estaba Beeper) - No se usa, se puede escribir si esta a GND - Decía: -1  
+  #define UI_DISPLAY_RS_PIN        19    // EXP2 PIN 4 (LCD RS)
+  #define UI_DISPLAY_RW_PIN        -1    // EXP2 PIN 1 (RW donde estaba Beeper) - No se usa, se puede escribir si esta a GND - Decía: -1
   #define UI_DISPLAY_ENABLE_PIN    42    // EXP2 PIN 3 (LCD ENA) - Decía 65
 
   #define UI_DISPLAY_D4_PIN        18    // EXP2 PIN 5 (LCD D4)
   #define UI_DISPLAY_D5_PIN        38    // EXP2 PIN 6 (LCD D5)
   #define UI_DISPLAY_D6_PIN        41    // EXP2 PIN 7 (LCD D6)
   #define UI_DISPLAY_D7_PIN        40    // EXP2 PIN 8 (LCD D7)
-  
-  #define UI_DELAYPERCHAR          50      
+
+  #define UI_DELAYPERCHAR          50
 
 // ********** COMENTADO por MAXI *************
 //  #define UI_DISPLAY_RS_PIN		63		// PINK.1, 88, D_RS
@@ -269,7 +269,7 @@ Define the pin
 If you have menus enabled, you need a method to leave it. If you have a back key, you can always go one level higher.
 Without a back key, you need to navigate to the back entry in the menu. Setting this value to 1 removes the back entry.
 */
-#define UI_HAS_BACK_KEY 0         // VER MAXI - Decia: 1 
+#define UI_HAS_BACK_KEY 0         // VER MAXI - Decia: 1
 
 /* Then you have the next/previous keys more like up/down keys, it may be more intuitive to change the direction you skip through the menus.
 If you set it to true, next will go to previous menu instead of the next menu.
@@ -381,11 +381,12 @@ Type 3: Show menu action. These actions have a _MENU_ in their name. If they are
                            UI_ACTION_BED_CALIBRATION_RETURN,        UI_ACTION_MOVING,                         UI_ACTION_NEXT,\
                            UI_ACTION_WIZARD_FIL_DISCHARGE_ABS,      UI_ACTION_WIZARD_FIL_CHARGE_ABS,          UI_ACTION_WIZARD_WAITHEAT_ABS,\
                            UI_ACTION_WIZARD_FIL_DISCHARGE_PLA,      UI_ACTION_WIZARD_FIL_CHARGE_PLA,          UI_ACTION_WIZARD_WAITHEAT_PLA,\
-                           UI_ACTION_WIZARD_FIL_DISCHARGE_PLA_ABS,  UI_ACTION_WIZARD_FIL_DISCHARGE_ABS_PLA,\ 
+                           UI_ACTION_WIZARD_FIL_DISCHARGE_PLA_ABS,  UI_ACTION_WIZARD_FIL_DISCHARGE_ABS_PLA,   UI_ACTION_WIZARD_WAITHEAT_EXT, UI_ACTION_WIZARD_WAITCOLD_EXT,\
                            UI_ACTION_HOME_Z,                        UI_ACTION_MENU_ZPOS,                      UI_ACTION_COOLDOWN,             UI_ACTION_OK,\
                            UI_ACTION_HOME_Y,                        UI_ACTION_MENU_YPOSFAST,                  UI_ACTION_PREHEAT_ABS,          UI_ACTION_PREVIOUS,\
                            UI_ACTION_HOME_X,                        UI_ACTION_MENU_XPOSFAST,                  UI_ACTION_DISABLE_STEPPER,      UI_ACTION_BACK,\
-                           UI_ACTION_BED_CALIBRATION_MANUAL}
+                           UI_ACTION_BED_CALIBRATION_MANUAL,		UI_ACTION_EXTRUDER_CLEANING_P1,			  UI_ACTION_EXTRUDER_CLEANING_P2, UI_ACTION_EXTRUDER_CLEANING_P3,\
+						   UI_ACTION_EXTRUDER_CLEANING_P4,			UI_ACTION_EXTRUDER_CLEANING_P5,			  UI_ACTION_EXTRUDER_CLEANING_P6}
 #ifdef UI_MATRIX_ACTIONS
 const int matrixActions[] PROGMEM = UI_MATRIX_ACTIONS;
 #endif
@@ -399,14 +400,14 @@ void uiInitKeys() {
 //    UI_KEYS_INIT_BUTTON_LOW(11);
 //    UI_KEYS_INIT_BUTTON_LOW(42);
 
-      UI_KEYS_INIT_BUTTON_LOW(11);   // PORT compartido con SD  -  PIN 3 (BTN UP    donde estaba BTN EN2)  
-      UI_KEYS_INIT_BUTTON_LOW(12);   // PORT compartido con SD  -  PIN 5 (BTN DOWN  donde estaba BTN EN1) 
+      UI_KEYS_INIT_BUTTON_LOW(11);   // PORT compartido con SD  -  PIN 3 (BTN UP    donde estaba BTN EN2)
+      UI_KEYS_INIT_BUTTON_LOW(12);   // PORT compartido con SD  -  PIN 5 (BTN DOWN  donde estaba BTN EN1)
       UI_KEYS_INIT_BUTTON_LOW(43);   // PORT compartido con LCD -  PIN 2 (BTN CENTER donde estaba BTN ENC)
-      UI_KEYS_INIT_BUTTON_LOW(36);   // PORT "ORIG_X_MAX_PIN"   -        (BTN LEFT)    
+      UI_KEYS_INIT_BUTTON_LOW(36);   // PORT "ORIG_X_MAX_PIN"   -        (BTN LEFT)
       //UI_KEYS_INIT_BUTTON_LOW(34);   // PORT "ORIG_X_MAX_PIN"   -        (BTN RIGHT)
 
-    
-  
+
+
     //  UI_KEYS_INIT_CLICKENCODER_LOW(47,45); // click encoder on pins 47 and 45. Phase is connected with gnd for signals.
     //  UI_KEYS_INIT_BUTTON_LOW(43); // push button, connects gnd to pin
     //  UI_KEYS_INIT_MATRIX(32,47,45,43,41,39,37,35);
@@ -414,9 +415,9 @@ void uiInitKeys() {
 }
 void uiCheckKeys(int &action) {
   #if UI_HAS_KEYS!=0
-  
+
     //UI_KEYS_CLICKENCODER_LOW_REV(33,31); // click encoder on pins 47 and 45. Phase is connected with gnd for signals.
-    
+
 //    UI_KEYS_BUTTON_LOW(4,UI_ACTION_OK); // push button, connects gnd to pin
 //    UI_KEYS_BUTTON_LOW(5,UI_ACTION_NEXT); // push button, connects gnd to pin
 //    UI_KEYS_BUTTON_LOW(6,UI_ACTION_PREVIOUS); // push button, connects gnd to pin
@@ -424,19 +425,19 @@ void uiCheckKeys(int &action) {
 //    UI_KEYS_BUTTON_LOW(42,UI_ACTION_SD_PRINT ); // push button, connects gnd to pin
 
        UI_KEYS_BUTTON_LOW(43,UI_ACTION_OK);          // push button BTN CENTER, connects gnd to pin
-       UI_KEYS_BUTTON_LOW(12,UI_ACTION_NEXT);        // push button BTN DWN, connects gnd to pin      
-       UI_KEYS_BUTTON_LOW(11,UI_ACTION_PREVIOUS);    // push button BTN UP, connects gnd to pin            
+       UI_KEYS_BUTTON_LOW(12,UI_ACTION_NEXT);        // push button BTN DWN, connects gnd to pin
+       UI_KEYS_BUTTON_LOW(11,UI_ACTION_PREVIOUS);    // push button BTN UP, connects gnd to pin
        //UI_KEYS_BUTTON_LOW(36,UI_ACTION_TOP_MENU);    // push button BTN IZQ, connects gnd to pin
        UI_KEYS_BUTTON_LOW(36,UI_ACTION_MENU_UP);    // push button BTN IZQ, connects gnd to pin
        //UI_KEYS_BUTTON_LOW(34,UI_ACTION_OK );         // push button BTN DER, connects gnd to pin
- 
 
 
 
-    
+
+
     //  UI_KEYS_CLICKENCODER_LOW_REV(47,45); // click encoder on pins 47 and 45. Phase is connected with gnd for signals.
     //  UI_KEYS_BUTTON_LOW(43,UI_ACTION_OK); // push button, connects gnd to pin
-    
+
   #endif
 }
 inline void uiCheckSlowEncoder() {
